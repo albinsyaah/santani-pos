@@ -3,6 +3,7 @@
         ? collect(explode(' ', $currentUser->name))->map(fn ($p) => mb_substr($p, 0, 1))->take(2)->implode('')
         : 'AP';
     $posGroupActive = request()->routeIs('pos.*') || request()->routeIs('sales.*');
+    $productsGroupActive = request()->routeIs('products.*') || request()->routeIs('batches.*') || request()->routeIs('categories.*');
     $purchasesGroupActive = request()->routeIs('purchases.*');
     $farmersGroupActive = request()->routeIs('customers.*') || request()->routeIs('customer-payments.*');
     $reportsGroupActive = request()->routeIs('reports.*');
@@ -39,10 +40,29 @@
             </div>
         </details>
 
-        <a href="{{ route('products.index') }}" wire:navigate class="side-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
-            <x-tabler-box />
-            <span>{{ __('Products') }}</span>
-        </a>
+        <details class="side-group" @if($productsGroupActive) open @endif>
+            <summary class="side-link {{ $productsGroupActive ? 'active' : '' }}">
+                <span class="side-group-label">
+                    <x-tabler-box />
+                    <span>{{ __('Products') }}</span>
+                </span>
+                <x-tabler-chevron-right class="chevron" />
+            </summary>
+            <div class="side-submenu">
+                <a href="{{ route('products.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('products.*') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Product Data') }}</span>
+                </a>
+                <a href="{{ route('batches.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('batches.*') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Batches & Expiration Dates') }}</span>
+                </a>
+                <a href="{{ route('categories.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Categories & Active Ingredients') }}</span>
+                </a>
+            </div>
+        </details>
         <details class="side-group" @if($purchasesGroupActive) open @endif>
             <summary class="side-link {{ $purchasesGroupActive ? 'active' : '' }}">
                 <span class="side-group-label">

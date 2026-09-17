@@ -19,7 +19,7 @@
 
     <form wire:submit="save">
         <div class="content-grid">
-            <div style="display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">
 
                 <div class="card">
                     <div class="card-head">
@@ -67,69 +67,73 @@
                         </button>
                     </div>
 
-                    <div class="table-wrap" style="margin-top:12px;">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th style="min-width:200px;">{{ __('Product') }}</th>
-                                    <th style="min-width:140px;">{{ __('Batch number') }}</th>
-                                    <th style="min-width:90px;">{{ __('Qty') }}</th>
-                                    <th style="min-width:130px;">{{ __('Unit cost (Rp)') }}</th>
-                                    <th style="min-width:130px;">{{ __('Selling price (Rp)') }}</th>
-                                    <th style="min-width:150px;">{{ __('Manufactured') }}</th>
-                                    <th style="min-width:150px;">{{ __('Expires') }}</th>
-                                    <th style="min-width:110px;">{{ __('Subtotal') }}</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($lines as $index => $line)
-                                    <tr wire:key="line-{{ $index }}">
-                                        <td>
-                                            <select class="select @error('lines.'.$index.'.product_id') invalid @enderror" wire:model.live="lines.{{ $index }}.product_id">
-                                                <option value="">{{ __('Select a product') }}</option>
-                                                @foreach ($this->products as $product)
-                                                    <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->unit }})</option>
-                                                @endforeach
-                                            </select>
-                                            @error('lines.'.$index.'.product_id') <span class="error">{{ $message }}</span> @enderror
-                                        </td>
-                                        <td>
-                                            <input type="text" class="input @error('lines.'.$index.'.batch_number') invalid @enderror" wire:model="lines.{{ $index }}.batch_number" placeholder="{{ __('e.g. B-2026-08') }}">
-                                            @error('lines.'.$index.'.batch_number') <span class="error">{{ $message }}</span> @enderror
-                                        </td>
-                                        <td>
-                                            <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.quantity">
-                                            @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
-                                        </td>
-                                        <td>
-                                            <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.unit_cost') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.unit_cost">
-                                            @error('lines.'.$index.'.unit_cost') <span class="error">{{ $message }}</span> @enderror
-                                        </td>
-                                        <td>
-                                            <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.selling_price') invalid @enderror" wire:model="lines.{{ $index }}.selling_price">
-                                            @error('lines.'.$index.'.selling_price') <span class="error">{{ $message }}</span> @enderror
-                                        </td>
-                                        <td>
-                                            <input type="date" class="input @error('lines.'.$index.'.manufactured_date') invalid @enderror" wire:model="lines.{{ $index }}.manufactured_date">
-                                            @error('lines.'.$index.'.manufactured_date') <span class="error">{{ $message }}</span> @enderror
-                                        </td>
-                                        <td>
-                                            <input type="date" class="input @error('lines.'.$index.'.expiration_date') invalid @enderror" wire:model="lines.{{ $index }}.expiration_date">
-                                            @error('lines.'.$index.'.expiration_date') <span class="error">{{ $message }}</span> @enderror
-                                        </td>
-                                        <td class="tabular">
-                                            Rp {{ number_format((float) ($line['quantity'] ?: 0) * (float) ($line['unit_cost'] ?: 0), 0, ',', '.') }}
-                                        </td>
-                                        <td>
-                                            <button type="button" class="kebab" wire:click="removeLine({{ $index }})" aria-label="{{ __('Remove row') }}">
-                                                <x-tabler-trash />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="entry-lines">
+                        @foreach ($lines as $index => $line)
+                            <div class="entry-line" wire:key="line-{{ $index }}">
+                                <div class="entry-line-head">
+                                    <span class="entry-line-title">{{ __('Item :number', ['number' => $index + 1]) }}</span>
+                                    @if (count($lines) > 1)
+                                        <button type="button" class="kebab" wire:click="removeLine({{ $index }})" aria-label="{{ __('Remove row') }}">
+                                            <x-tabler-trash />
+                                        </button>
+                                    @endif
+                                </div>
+
+                                <div class="entry-grid">
+                                    <div class="field span-2">
+                                        <label>{{ __('Product') }}</label>
+                                        <select class="select @error('lines.'.$index.'.product_id') invalid @enderror" wire:model.live="lines.{{ $index }}.product_id">
+                                            <option value="">{{ __('Select a product') }}</option>
+                                            @foreach ($this->products as $product)
+                                                <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->unit }})</option>
+                                            @endforeach
+                                        </select>
+                                        @error('lines.'.$index.'.product_id') <span class="error">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="field">
+                                        <label>{{ __('Batch number') }}</label>
+                                        <input type="text" class="input @error('lines.'.$index.'.batch_number') invalid @enderror" wire:model="lines.{{ $index }}.batch_number" placeholder="{{ __('e.g. B-2026-08') }}">
+                                        @error('lines.'.$index.'.batch_number') <span class="error">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="field">
+                                        <label>{{ __('Quantity') }}</label>
+                                        <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0">
+                                        @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="field">
+                                        <label>{{ __('Unit cost (Rp)') }}</label>
+                                        <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.unit_cost') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.unit_cost" placeholder="0">
+                                        @error('lines.'.$index.'.unit_cost') <span class="error">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="field">
+                                        <label>{{ __('Selling price (Rp)') }}</label>
+                                        <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.selling_price') invalid @enderror" wire:model="lines.{{ $index }}.selling_price" placeholder="0">
+                                        @error('lines.'.$index.'.selling_price') <span class="error">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="field">
+                                        <label>{{ __('Manufactured') }} <span class="hint">({{ __('optional') }})</span></label>
+                                        <input type="date" class="input @error('lines.'.$index.'.manufactured_date') invalid @enderror" wire:model="lines.{{ $index }}.manufactured_date">
+                                        @error('lines.'.$index.'.manufactured_date') <span class="error">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="field">
+                                        <label>{{ __('Expires') }}</label>
+                                        <input type="date" class="input @error('lines.'.$index.'.expiration_date') invalid @enderror" wire:model="lines.{{ $index }}.expiration_date">
+                                        @error('lines.'.$index.'.expiration_date') <span class="error">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
+
+                                <div class="entry-line-foot">
+                                    <span>{{ __('Subtotal') }}</span>
+                                    <span class="entry-line-total tabular">Rp {{ number_format((float) ($line['quantity'] ?: 0) * (float) ($line['unit_cost'] ?: 0), 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
 
                     @error('lines')

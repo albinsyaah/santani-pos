@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ReceiptController;
+use App\Livewire\Batches\Index as BatchesIndex;
+use App\Livewire\Categories\Index as CategoriesIndex;
 use App\Http\Middleware\SetLocale;
 use App\Livewire\CustomerPayments\Index as CustomerPaymentsIndex;
 use App\Livewire\Customers\Index as CustomersIndex;
@@ -33,6 +35,8 @@ Route::livewire('/pos/pending', PosPending::class)->name('pos.pending');
 Route::livewire('/sales', SalesIndex::class)->name('sales.index');
 Route::get('/sales/{sale}/receipt', [ReceiptController::class, 'show'])->name('sales.receipt');
 Route::livewire('/products', ProductsIndex::class)->name('products.index');
+Route::livewire('/batches', BatchesIndex::class)->name('batches.index');
+Route::livewire('/categories', CategoriesIndex::class)->name('categories.index');
 Route::livewire('/purchases', PurchasesIndex::class)->name('purchases.index');
 Route::livewire('/purchases/create', PurchasesCreate::class)->name('purchases.create');
 Route::livewire('/customers', CustomersIndex::class)->name('customers.index');

@@ -1,8 +1,8 @@
 <div>
     <div class="page-head">
         <div>
-            <h1>{{ __('Products') }}</h1>
-            <p>{{ __('Fertilizers, pesticides and agricultural chemicals in your catalog.') }}</p>
+            <h1>{{ __('Product Data') }}</h1>
+            <p>{{ __('Catalog of fertilizers, pesticides, seeds, and farming tools.') }}</p>
         </div>
         <button class="btn btn-primary" wire:click="openCreateModal">
             <x-tabler-plus stroke-width="2.5" />
