@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ReceiptController;
 use App\Http\Middleware\SetLocale;
+use App\Livewire\CustomerPayments\Index as CustomerPaymentsIndex;
 use App\Livewire\Customers\Index as CustomersIndex;
 use App\Livewire\Dashboard;
 use App\Livewire\Pos\Pending as PosPending;
@@ -30,6 +31,7 @@ Route::get('/sales/{sale}/receipt', [ReceiptController::class, 'show'])->name('s
 Route::livewire('/products', ProductsIndex::class)->name('products.index');
 Route::livewire('/purchases', PurchasesIndex::class)->name('purchases.index');
 Route::livewire('/customers', CustomersIndex::class)->name('customers.index');
+Route::livewire('/customer-payments', CustomerPaymentsIndex::class)->name('customer-payments.index');
 Route::livewire('/suppliers', SuppliersIndex::class)->name('suppliers.index');
 Route::livewire('/reports', ReportsIndex::class)->name('reports.index');
 Route::livewire('/settings', SettingsIndex::class)->name('settings.index');

@@ -3,6 +3,7 @@
         ? collect(explode(' ', $currentUser->name))->map(fn ($p) => mb_substr($p, 0, 1))->take(2)->implode('')
         : 'AP';
     $posGroupActive = request()->routeIs('pos.*') || request()->routeIs('sales.*');
+    $farmersGroupActive = request()->routeIs('customers.*') || request()->routeIs('customer-payments.*');
 @endphp
 <aside class="sidebar">
     <p class="side-label">{{ __('Main menu') }}</p>
@@ -44,10 +45,25 @@
             <x-tabler-truck-delivery />
             <span>{{ __('Purchases') }}</span>
         </a>
-        <a href="{{ route('customers.index') }}" wire:navigate class="side-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
-            <x-tabler-users />
-            <span>{{ __('Farmers') }}</span>
-        </a>
+        <details class="side-group" @if($farmersGroupActive) open @endif>
+            <summary class="side-link {{ $farmersGroupActive ? 'active' : '' }}">
+                <span class="side-group-label">
+                    <x-tabler-users />
+                    <span>{{ __('Farmers') }}</span>
+                </span>
+                <x-tabler-chevron-right class="chevron" />
+            </summary>
+            <div class="side-submenu">
+                <a href="{{ route('customers.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Farmers & Customers') }}</span>
+                </a>
+                <a href="{{ route('customer-payments.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('customer-payments.*') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Receivables Payments') }}</span>
+                </a>
+            </div>
+        </details>
         <a href="{{ route('suppliers.index') }}" wire:navigate class="side-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
             <x-tabler-building-warehouse />
             <span>{{ __('Suppliers') }}</span>
