@@ -18,6 +18,7 @@ class Purchase extends Model
         'total_amount',
         'paid_amount',
         'payment_status',
+        'note',
     ];
 
     protected function casts(): array

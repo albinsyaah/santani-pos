@@ -3,7 +3,9 @@
         ? collect(explode(' ', $currentUser->name))->map(fn ($p) => mb_substr($p, 0, 1))->take(2)->implode('')
         : 'AP';
     $posGroupActive = request()->routeIs('pos.*') || request()->routeIs('sales.*');
+    $purchasesGroupActive = request()->routeIs('purchases.*');
     $farmersGroupActive = request()->routeIs('customers.*') || request()->routeIs('customer-payments.*');
+    $reportsGroupActive = request()->routeIs('reports.*');
 @endphp
 <aside class="sidebar">
     <p class="side-label">{{ __('Main menu') }}</p>
@@ -41,10 +43,25 @@
             <x-tabler-box />
             <span>{{ __('Products') }}</span>
         </a>
-        <a href="{{ route('purchases.index') }}" wire:navigate class="side-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
-            <x-tabler-truck-delivery />
-            <span>{{ __('Purchases') }}</span>
-        </a>
+        <details class="side-group" @if($purchasesGroupActive) open @endif>
+            <summary class="side-link {{ $purchasesGroupActive ? 'active' : '' }}">
+                <span class="side-group-label">
+                    <x-tabler-truck-delivery />
+                    <span>{{ __('Purchases') }}</span>
+                </span>
+                <x-tabler-chevron-right class="chevron" />
+            </summary>
+            <div class="side-submenu">
+                <a href="{{ route('purchases.create') }}" wire:navigate class="side-sublink {{ request()->routeIs('purchases.create') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Incoming Stock Entry') }}</span>
+                </a>
+                <a href="{{ route('purchases.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('purchases.index') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Purchase History') }}</span>
+                </a>
+            </div>
+        </details>
         <details class="side-group" @if($farmersGroupActive) open @endif>
             <summary class="side-link {{ $farmersGroupActive ? 'active' : '' }}">
                 <span class="side-group-label">
@@ -68,10 +85,33 @@
             <x-tabler-building-warehouse />
             <span>{{ __('Suppliers') }}</span>
         </a>
-        <a href="{{ route('reports.index') }}" wire:navigate class="side-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
-            <x-tabler-chart-bar />
-            <span>{{ __('Reports') }}</span>
-        </a>
+        <details class="side-group" @if($reportsGroupActive) open @endif>
+            <summary class="side-link {{ $reportsGroupActive ? 'active' : '' }}">
+                <span class="side-group-label">
+                    <x-tabler-chart-bar />
+                    <span>{{ __('Reports') }}</span>
+                </span>
+                <x-tabler-chevron-right class="chevron" />
+            </summary>
+            <div class="side-submenu">
+                <a href="{{ route('reports.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('reports.index') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Overview') }}</span>
+                </a>
+                <a href="{{ route('reports.sales') }}" wire:navigate class="side-sublink {{ request()->routeIs('reports.sales') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Sales Report') }}</span>
+                </a>
+                <a href="{{ route('reports.receivables') }}" wire:navigate class="side-sublink {{ request()->routeIs('reports.receivables') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Farmer Receivables Report') }}</span>
+                </a>
+                <a href="{{ route('reports.expirations') }}" wire:navigate class="side-sublink {{ request()->routeIs('reports.expirations') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Expired Pesticides Report') }}</span>
+                </a>
+            </div>
+        </details>
     </nav>
 
     <hr class="side-divider">

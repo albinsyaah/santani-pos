@@ -1,0 +1,23 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('purchases', function (Blueprint $table) {
+            // Free-text reference for the incoming delivery (delivery note no., driver, etc.).
+            $table->string('note')->nullable()->after('payment_status');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('purchases', function (Blueprint $table) {
+            $table->dropColumn('note');
+        });
+    }
+};
