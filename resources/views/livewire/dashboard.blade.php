@@ -12,12 +12,12 @@
 
 <div @if($autoUpdating) wire:poll.5s="tick" @endif>
 
-    <div class="page-head">
+    {{-- <div class="page-head">
         <div>
             <h1>{{ __('Welcome back, :name', ['name' => \App\Models\User::first()?->name ?? __('there')]) }}</h1>
             <p>{{ __("Here's a clear overview of your store performance this week.") }}</p>
         </div>
-    </div>
+    </div> --}}
 
     <div class="content-grid">
 
@@ -153,10 +153,10 @@
         <aside class="rail">
 
             <div class="rail-actions">
-                <button class="pill-btn">
+                {{-- <button class="pill-btn">
                     <x-tabler-building-store />
                     {{ __('Main outlet') }}
-                </button>
+                </button> --}}
                 <a href="{{ route('pos.terminal') }}" wire:navigate class="pill-btn primary">
                     <x-tabler-plus stroke-width="2.5" />
                     {{ __('New transaction') }}
@@ -193,7 +193,7 @@
                 </div>
             </div>
 
-            <div class="card pay-card">
+            {{-- <div class="card pay-card">
                 <div class="card-head" style="padding:0;">
                     <div>
                         <p style="font-size:13.5px;font-weight:600;">{{ __('Payment methods') }}</p>
@@ -218,7 +218,7 @@
                         @endforeach
                     </div>
                 @endif
-            </div>
+            </div> --}}
 
             <div class="card stock-card">
                 <div class="stock-head">

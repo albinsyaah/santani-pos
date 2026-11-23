@@ -3,7 +3,7 @@
         <span class="brand-mark">
             <x-tabler-leaf stroke-width="2.5" style="color:#c6f135" />
         </span>
-        Agro<b>POS</b>
+        Santani
     </a>
 
     <div class="topbar-tools">
