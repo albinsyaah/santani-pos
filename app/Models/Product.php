@@ -55,6 +55,18 @@ class Product extends Model
         return $this->hasMany(PurchaseItem::class);
     }
 
+    /** Next auto-generated SKU, e.g. SKU-0001. Hand-typed SKUs that don't follow the pattern are ignored. */
+    public static function generateSku(): string
+    {
+        $last = static::query()
+            ->where('sku', 'like', 'SKU-%')
+            ->pluck('sku')
+            ->map(fn (string $sku) => preg_match('/^SKU-(\d+)$/', $sku, $m) ? (int) $m[1] : 0)
+            ->max() ?? 0;
+
+        return 'SKU-'.str_pad((string) ($last + 1), 4, '0', STR_PAD_LEFT);
+    }
+
     // Accessor: Get aggregated stock across all valid non-expired batches
     public function getTotalStockAttribute(): int
     {

@@ -74,6 +74,7 @@ class Index extends Component
     {
         $this->editingId = null;
         $this->reset(['name', 'sku', 'unit', 'formCategoryId', 'activeIngredient', 'purchasePrice', 'sellingPrice', 'minStockLevel', 'isRestricted']);
+        $this->sku = Product::generateSku();
         $this->unit = 'kg';
         $this->minStockLevel = '10';
         $this->resetErrorBag();
@@ -107,6 +108,11 @@ class Index extends Component
 
     public function save(): void
     {
+        // A cleared SKU is filled in automatically instead of failing validation.
+        if (trim($this->sku) === '') {
+            $this->sku = Product::generateSku();
+        }
+
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['required', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($this->editingId)],

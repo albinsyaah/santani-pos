@@ -120,7 +120,7 @@
 
                         <div class="form-row">
                             <div class="field">
-                                <label>{{ __('SKU') }}</label>
+                                <label>{{ __('SKU') }} <span class="hint">({{ __('auto-filled') }})</span></label>
                                 <input type="text" class="input @error('sku') invalid @enderror" wire:model="sku" placeholder="{{ __('e.g. FRT-NPK-25KG') }}">
                                 @error('sku') <span class="error">{{ $message }}</span> @enderror
                             </div>

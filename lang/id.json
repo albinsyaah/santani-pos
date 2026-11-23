@@ -439,5 +439,6 @@
     "No expiry date": "Tanpa tanggal kedaluwarsa",
     "Change product": "Ganti produk",
     "Search product by name, SKU or barcode…": "Cari produk berdasarkan nama, SKU, atau barcode…",
-    "Batch numbers are generated automatically and prices come from the product catalog. Use Incoming Stock Entry for new deliveries.": "Nomor batch dibuat otomatis dan harga diambil dari katalog produk. Gunakan Entri Stok Masuk untuk pengiriman baru."
+    "Batch numbers are generated automatically and prices come from the product catalog. Use Incoming Stock Entry for new deliveries.": "Nomor batch dibuat otomatis dan harga diambil dari katalog produk. Gunakan Entri Stok Masuk untuk pengiriman baru.",
+    "auto-filled": "terisi otomatis"
 }
