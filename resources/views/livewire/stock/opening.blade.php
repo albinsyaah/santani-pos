@@ -93,7 +93,7 @@
                                 </div>
 
                                 <div class="field">
-                                    <label>{{ __('Expires') }}</label>
+                                    <label>{{ __('Expires') }} <span class="hint">({{ __('optional') }})</span></label>
                                     <input type="date" class="input @error('lines.'.$index.'.expiration_date') invalid @enderror" wire:model="lines.{{ $index }}.expiration_date">
                                     @error('lines.'.$index.'.expiration_date') <span class="error">{{ $message }}</span> @enderror
                                 </div>

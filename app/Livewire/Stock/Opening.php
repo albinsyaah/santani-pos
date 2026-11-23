@@ -126,7 +126,7 @@ class Opening extends Component
             'lines.*.manufactured_date' => ['nullable', 'date'],
             // Existing inventory may already be close to (or past) its date,
             // so unlike incoming deliveries there is no "after:today" rule.
-            'lines.*.expiration_date' => ['required', 'date'],
+            'lines.*.expiration_date' => ['nullable', 'date'],
         ], [], [
             'lines.*.product_id' => __('product'),
             'lines.*.batch_number' => __('batch number'),
@@ -154,7 +154,7 @@ class Opening extends Component
                     $batch->purchase_price = $purchasePrice ?? $batch->purchase_price ?? $product->purchase_price;
                     $batch->selling_price = $sellingPrice ?? $batch->selling_price ?? $product->selling_price;
                     $batch->manufactured_date = ($line['manufactured_date'] ?? '') ?: null;
-                    $batch->expiration_date = $line['expiration_date'];
+                    $batch->expiration_date = ($line['expiration_date'] ?? '') ?: null;
                     $batch->stock_quantity = (int) $batch->stock_quantity + (int) $line['quantity'];
                     $batch->save();
                 }

@@ -134,6 +134,8 @@
                             <td>
                                 @if ($depleted)
                                     <span class="badge badge-neutral">{{ __('Out of stock') }}</span>
+                                @elseif ($days === null)
+                                    <span class="badge badge-neutral">{{ __('No expiry date') }}</span>
                                 @elseif ($days < 0)
                                     <span class="badge badge-bad">{{ __('Expired :days days ago', ['days' => abs($days)]) }}</span>
                                 @elseif ($days <= \App\Livewire\Batches\Index::SOON_WINDOW_DAYS)
@@ -213,7 +215,7 @@
                                 @error('manufacturedDate') <span class="error">{{ $message }}</span> @enderror
                             </div>
                             <div class="field">
-                                <label>{{ __('Expires') }}</label>
+                                <label>{{ __('Expires') }} <span class="hint">({{ __('optional') }})</span></label>
                                 <input type="date" class="input @error('expirationDate') invalid @enderror" wire:model="expirationDate">
                                 @error('expirationDate') <span class="error">{{ $message }}</span> @enderror
                             </div>

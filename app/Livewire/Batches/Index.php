@@ -102,15 +102,19 @@ class Index extends Component
                 ->where('expiration_date', '>=', now()->startOfDay())
                 ->where('expiration_date', '<=', $soonCutoff),
             'fresh' => $query->where('stock_quantity', '>', 0)
-                ->where('expiration_date', '>', $soonCutoff),
+                ->where(fn ($q) => $q->whereNull('expiration_date')->orWhere('expiration_date', '>', $soonCutoff)),
             'depleted' => $query->where('stock_quantity', '<=', 0),
             default => $query,
         };
     }
 
-    /** Days until expiry — negative once the batch is past its date. */
-    public function daysLeft(ProductBatch $batch): int
+    /** Days until expiry — negative once past its date, null when the batch has no expiry date. */
+    public function daysLeft(ProductBatch $batch): ?int
     {
+        if ($batch->expiration_date === null) {
+            return null;
+        }
+
         return (int) now()->startOfDay()->diffInDays($batch->expiration_date, false);
     }
 
@@ -126,8 +130,8 @@ class Index extends Component
         return [
             'count' => $batches->count(),
             'units' => (int) $inStock->sum('stock_quantity'),
-            'soon' => $inStock->filter(fn ($b) => $b->expiration_date >= now()->startOfDay() && $b->expiration_date <= $soonCutoff)->count(),
-            'expired' => $inStock->filter(fn ($b) => $b->expiration_date < now()->startOfDay())->count(),
+            'soon' => $inStock->filter(fn ($b) => $b->expiration_date !== null && $b->expiration_date >= now()->startOfDay() && $b->expiration_date <= $soonCutoff)->count(),
+            'expired' => $inStock->filter(fn ($b) => $b->expiration_date !== null && $b->expiration_date < now()->startOfDay())->count(),
             'value' => (float) $inStock->sum(fn ($b) => (int) $b->stock_quantity * (float) ($b->purchase_price ?? 0)),
         ];
     }
@@ -174,7 +178,7 @@ class Index extends Component
             'manufacturedDate' => ['nullable', 'date'],
             // Corrections may legitimately set a past date, so no "after:today" here —
             // unlike stock entry, this screen exists partly to fix bad data.
-            'expirationDate' => ['required', 'date'],
+            'expirationDate' => ['nullable', 'date'],
         ], [], [
             'batchNumber' => __('batch number'),
             'stockQuantity' => __('stock quantity'),
@@ -192,7 +196,7 @@ class Index extends Component
             'purchase_price' => $validated['purchasePrice'] !== '' ? $validated['purchasePrice'] : null,
             'selling_price' => $validated['sellingPrice'] !== '' ? $validated['sellingPrice'] : null,
             'manufactured_date' => $validated['manufacturedDate'] ?: null,
-            'expiration_date' => $validated['expirationDate'],
+            'expiration_date' => $validated['expirationDate'] ?: null,
         ]);
 
         $this->flash = __('Batch :number was updated.', ['number' => $batch->batch_number]);
@@ -241,6 +245,7 @@ class Index extends Component
     {
         $batches = $this->applyShelfFilter($this->baseQuery())
             ->with('product.category')
+            ->orderByRaw('CASE WHEN expiration_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('expiration_date')
             ->paginate(10);
 

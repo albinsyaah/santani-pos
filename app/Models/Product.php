@@ -60,7 +60,7 @@ class Product extends Model
     {
         return $this->batches()
             ->where('stock_quantity', '>', 0)
-            ->where('expiration_date', '>', now())
+            ->where(fn ($q) => $q->whereNull('expiration_date')->orWhere('expiration_date', '>', now()))
             ->sum('stock_quantity');
     }
 }

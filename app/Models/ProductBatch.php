@@ -69,7 +69,9 @@ class ProductBatch extends Model
     public function scopeFefoAvailable(Builder $query): Builder
     {
         return $query->where('stock_quantity', '>', 0)
-            ->where('expiration_date', '>', now())
+            ->where(fn (Builder $q) => $q->whereNull('expiration_date')->orWhere('expiration_date', '>', now()))
+            // Batches without an expiry date are sold last, after any dated stock.
+            ->orderByRaw('CASE WHEN expiration_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('expiration_date', 'asc');
     }
 

@@ -75,9 +75,7 @@ test('required fields are validated', function () {
         ->call('save')
         ->assertHasErrors([
             'lines.0.product_id',
-            'lines.0.batch_number',
             'lines.0.quantity',
-            'lines.0.expiration_date',
         ]);
 
     expect(ProductBatch::count())->toBe(0);
@@ -103,4 +101,21 @@ test('the batch number is auto-filled and a blank one is generated on save', fun
     expect(ProductBatch::first()->batch_number)->toBe($prefix.'001');
 
     Livewire::test(Opening::class)->assertSet('lines.0.batch_number', $prefix.'002');
+});
+
+test('manufactured and expiration dates are optional', function () {
+    $product = makeStockProduct();
+
+    Livewire::test(Opening::class)
+        ->set('lines.0.product_id', $product->id)
+        ->set('lines.0.quantity', '12')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $batch = ProductBatch::first();
+
+    expect($batch->manufactured_date)->toBeNull()
+        ->and($batch->expiration_date)->toBeNull()
+        ->and($product->fresh()->total_stock)->toBe(12)
+        ->and(ProductBatch::fefoAvailable()->count())->toBe(1);
 });

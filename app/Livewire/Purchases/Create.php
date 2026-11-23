@@ -161,7 +161,7 @@ class Create extends Component
             'lines.*.unit_cost' => ['required', 'numeric', 'min:0'],
             'lines.*.selling_price' => ['nullable', 'numeric', 'min:0'],
             'lines.*.manufactured_date' => ['nullable', 'date'],
-            'lines.*.expiration_date' => ['required', 'date', 'after:today'],
+            'lines.*.expiration_date' => ['nullable', 'date', 'after:today'],
         ], [], [
             'supplierId' => __('supplier'),
             'purchaseNumber' => __('purchase number'),
@@ -209,7 +209,7 @@ class Create extends Component
                         ? (float) $sellingPrice
                         : ($batch->selling_price ?? Product::find($line['product_id'])?->selling_price);
                     $batch->manufactured_date = ($line['manufactured_date'] ?? '') ?: null;
-                    $batch->expiration_date = $line['expiration_date'];
+                    $batch->expiration_date = ($line['expiration_date'] ?? '') ?: null;
                     $batch->stock_quantity = (int) $batch->stock_quantity + $quantity;
                     $batch->save();
 

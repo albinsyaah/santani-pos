@@ -435,5 +435,6 @@
     "No supplier or payment is recorded. Use Incoming Stock Entry for new deliveries.": "Tidak ada pemasok atau pembayaran yang dicatat. Gunakan Entri Stok Masuk untuk pengiriman baru.",
     "Save stock": "Simpan stok",
     "Could not save the stock: :message": "Tidak dapat menyimpan stok: :message",
-    ":count batch(es) added to inventory.": ":count batch ditambahkan ke persediaan."
+    ":count batch(es) added to inventory.": ":count batch ditambahkan ke persediaan.",
+    "No expiry date": "Tanpa tanggal kedaluwarsa"
 }
