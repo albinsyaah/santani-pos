@@ -3,7 +3,7 @@
         ? collect(explode(' ', $currentUser->name))->map(fn ($p) => mb_substr($p, 0, 1))->take(2)->implode('')
         : 'AP';
     $posGroupActive = request()->routeIs('pos.*') || request()->routeIs('sales.*');
-    $productsGroupActive = request()->routeIs('products.*') || request()->routeIs('batches.*') || request()->routeIs('categories.*');
+    $productsGroupActive = request()->routeIs('products.*') || request()->routeIs('batches.*') || request()->routeIs('categories.*') || request()->routeIs('stock.*');
     $purchasesGroupActive = request()->routeIs('purchases.*');
     $farmersGroupActive = request()->routeIs('customers.*') || request()->routeIs('customer-payments.*');
     $reportsGroupActive = request()->routeIs('reports.*');
@@ -52,6 +52,10 @@
                 <a href="{{ route('products.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('products.*') ? 'active' : '' }}">
                     <x-tabler-point />
                     <span>{{ __('Product Data') }}</span>
+                </a>
+                <a href="{{ route('stock.opening') }}" wire:navigate class="side-sublink {{ request()->routeIs('stock.*') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Add Current Stock') }}</span>
                 </a>
                 <a href="{{ route('batches.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('batches.*') ? 'active' : '' }}">
                     <x-tabler-point />

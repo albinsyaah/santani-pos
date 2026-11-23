@@ -18,6 +18,7 @@ use App\Livewire\Reports\Receivables as ReportsReceivables;
 use App\Livewire\Reports\Sales as ReportsSales;
 use App\Livewire\Sales\Index as SalesIndex;
 use App\Livewire\Settings\Index as SettingsIndex;
+use App\Livewire\Stock\Opening as StockOpening;
 use App\Livewire\Suppliers\Index as SuppliersIndex;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,7 @@ Route::livewire('/pos/pending', PosPending::class)->name('pos.pending');
 Route::livewire('/sales', SalesIndex::class)->name('sales.index');
 Route::get('/sales/{sale}/receipt', [ReceiptController::class, 'show'])->name('sales.receipt');
 Route::livewire('/products', ProductsIndex::class)->name('products.index');
+Route::livewire('/products/stock', StockOpening::class)->name('stock.opening');
 Route::livewire('/batches', BatchesIndex::class)->name('batches.index');
 Route::livewire('/categories', CategoriesIndex::class)->name('categories.index');
 Route::livewire('/purchases', PurchasesIndex::class)->name('purchases.index');

@@ -426,5 +426,14 @@
     "unit cost": "harga satuan",
     "unpaid Rp :amount": "belum lunas Rp :amount",
     "vs last week": "vs minggu lalu",
-    "with :count orders": "dengan :count pesanan"
+    "with :count orders": "dengan :count pesanan",
+    "Add Current Stock": "Tambah Stok Saat Ini",
+    "Record the inventory you already have on the shelf, with batch numbers and expiration dates.": "Catat persediaan yang sudah ada di rak, lengkap dengan nomor batch dan tanggal kedaluwarsa.",
+    "Stock on hand": "Stok yang ada",
+    "Each row creates a batch, or tops up the batch if the batch number already exists for that product.": "Setiap baris membuat batch baru, atau menambah stok batch jika nomor batch sudah ada untuk produk tersebut.",
+    "Stock value (at purchase price)": "Nilai stok (harga beli)",
+    "No supplier or payment is recorded. Use Incoming Stock Entry for new deliveries.": "Tidak ada pemasok atau pembayaran yang dicatat. Gunakan Entri Stok Masuk untuk pengiriman baru.",
+    "Save stock": "Simpan stok",
+    "Could not save the stock: :message": "Tidak dapat menyimpan stok: :message",
+    ":count batch(es) added to inventory.": ":count batch ditambahkan ke persediaan."
 }

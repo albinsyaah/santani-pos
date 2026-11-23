@@ -1,0 +1,84 @@
+<?php
+
+use App\Livewire\Stock\Opening;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\ProductBatch;
+use Livewire\Livewire;
+
+function makeStockProduct(): Product
+{
+    $category = Category::create(['name' => 'Fertilizer', 'slug' => 'fertilizer']);
+
+    return Product::create([
+        'category_id' => $category->id,
+        'sku' => 'SKU-001',
+        'name' => 'NPK 16-16-16',
+        'unit' => 'kg',
+        'purchase_price' => 10000,
+        'selling_price' => 12500,
+    ]);
+}
+
+test('the current stock page renders', function () {
+    $this->get(route('stock.opening'))->assertOk()->assertSee('Add Current Stock');
+});
+
+test('picking a product prefills its prices', function () {
+    $product = makeStockProduct();
+
+    Livewire::test(Opening::class)
+        ->set('lines.0.product_id', $product->id)
+        ->assertSet('lines.0.purchase_price', '10000')
+        ->assertSet('lines.0.selling_price', '12500');
+});
+
+test('it records current stock as a new batch', function () {
+    $product = makeStockProduct();
+
+    Livewire::test(Opening::class)
+        ->set('lines.0.product_id', $product->id)
+        ->set('lines.0.batch_number', 'B-001')
+        ->set('lines.0.quantity', '25')
+        ->set('lines.0.expiration_date', now()->addYear()->format('Y-m-d'))
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $batch = ProductBatch::first();
+
+    expect($batch->product_id)->toBe($product->id)
+        ->and($batch->stock_quantity)->toBe(25)
+        ->and((float) $batch->purchase_price)->toBe(10000.0)
+        ->and((float) $batch->selling_price)->toBe(12500.0);
+});
+
+test('the same batch number tops up the existing batch', function () {
+    $product = makeStockProduct();
+    $expires = now()->addYear()->format('Y-m-d');
+
+    foreach ([10, 15] as $quantity) {
+        Livewire::test(Opening::class)
+            ->set('lines.0.product_id', $product->id)
+            ->set('lines.0.batch_number', 'B-001')
+            ->set('lines.0.quantity', (string) $quantity)
+            ->set('lines.0.expiration_date', $expires)
+            ->call('save')
+            ->assertHasNoErrors();
+    }
+
+    expect(ProductBatch::count())->toBe(1)
+        ->and(ProductBatch::first()->stock_quantity)->toBe(25);
+});
+
+test('required fields are validated', function () {
+    Livewire::test(Opening::class)
+        ->call('save')
+        ->assertHasErrors([
+            'lines.0.product_id',
+            'lines.0.batch_number',
+            'lines.0.quantity',
+            'lines.0.expiration_date',
+        ]);
+
+    expect(ProductBatch::count())->toBe(0);
+});
