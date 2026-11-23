@@ -53,37 +53,42 @@
                             <div class="entry-grid">
                                 <div class="field span-2">
                                     <label>{{ __('Product') }}</label>
-                                    <select class="select @error('lines.'.$index.'.product_id') invalid @enderror" wire:model.live="lines.{{ $index }}.product_id">
-                                        <option value="">{{ __('Select a product') }}</option>
-                                        @foreach ($this->products as $product)
-                                            <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->unit }})</option>
-                                        @endforeach
-                                    </select>
+                                    @if ($line['product_id'] && ($selected = $this->selectedProducts->get($line['product_id'])))
+                                        <div class="product-picked">
+                                            <span>
+                                                <strong>{{ $selected->name }}</strong>
+                                                <span class="hint">{{ $selected->sku }} &middot; {{ $selected->unit }}</span>
+                                            </span>
+                                            <button type="button" class="btn btn-sm" wire:click="clearProduct({{ $index }})">
+                                                {{ __('Change product') }}
+                                            </button>
+                                        </div>
+                                    @else
+                                        <input type="search" class="input @error('lines.'.$index.'.product_id') invalid @enderror"
+                                               wire:model.live.debounce.250ms="lines.{{ $index }}.search"
+                                               placeholder="{{ __('Search product by name, SKU or barcode…') }}" autocomplete="off">
+                                        @if (trim($line['search']) !== '')
+                                            @php $matches = $this->searchProducts($line['search']); @endphp
+                                            <div class="product-results">
+                                                @forelse ($matches as $match)
+                                                    <button type="button" class="product-result" wire:key="match-{{ $index }}-{{ $match->id }}"
+                                                            wire:click="selectProduct({{ $index }}, {{ $match->id }})">
+                                                        <span>{{ $match->name }}</span>
+                                                        <span class="hint">{{ $match->sku }} &middot; {{ $match->unit }}</span>
+                                                    </button>
+                                                @empty
+                                                    <p class="product-result-empty">{{ __('No products found.') }}</p>
+                                                @endforelse
+                                            </div>
+                                        @endif
+                                    @endif
                                     @error('lines.'.$index.'.product_id') <span class="error">{{ $message }}</span> @enderror
-                                </div>
-
-                                <div class="field">
-                                    <label>{{ __('Batch number') }}</label>
-                                    <input type="text" class="input @error('lines.'.$index.'.batch_number') invalid @enderror" wire:model="lines.{{ $index }}.batch_number" placeholder="{{ __('e.g. B-2026-08') }}">
-                                    @error('lines.'.$index.'.batch_number') <span class="error">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div class="field">
                                     <label>{{ __('Quantity') }}</label>
                                     <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0">
                                     @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
-                                </div>
-
-                                <div class="field">
-                                    <label>{{ __('Purchase price (Rp)') }}</label>
-                                    <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.purchase_price') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.purchase_price" placeholder="0">
-                                    @error('lines.'.$index.'.purchase_price') <span class="error">{{ $message }}</span> @enderror
-                                </div>
-
-                                <div class="field">
-                                    <label>{{ __('Selling price (Rp)') }}</label>
-                                    <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.selling_price') invalid @enderror" wire:model="lines.{{ $index }}.selling_price" placeholder="0">
-                                    @error('lines.'.$index.'.selling_price') <span class="error">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div class="field">
@@ -125,13 +130,8 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <div class="cart-summary-row total">
-                            <span>{{ __('Stock value (at purchase price)') }}</span>
-                            <span class="tabular">Rp {{ number_format($this->totalValue, 0, ',', '.') }}</span>
-                        </div>
-
                         <p class="stat-caption" style="margin-top:10px;">
-                            {{ __('No supplier or payment is recorded. Use Incoming Stock Entry for new deliveries.') }}
+                            {{ __('Batch numbers are generated automatically and prices come from the product catalog. Use Incoming Stock Entry for new deliveries.') }}
                         </p>
 
                         <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;" wire:loading.attr="disabled" wire:target="save">

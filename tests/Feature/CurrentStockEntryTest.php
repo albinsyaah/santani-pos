@@ -24,13 +24,30 @@ test('the current stock page renders', function () {
     $this->get(route('stock.opening'))->assertOk()->assertSee('Add Current Stock');
 });
 
-test('picking a product prefills its prices', function () {
+test('products can be searched by name or SKU and picked', function () {
     $product = makeStockProduct();
 
+    $component = Livewire::test(Opening::class)
+        ->set('lines.0.search', 'npk')
+        ->assertSee('NPK 16-16-16')
+        ->set('lines.0.search', 'SKU-001')
+        ->assertSee('NPK 16-16-16')
+        ->set('lines.0.search', 'zzz')
+        ->assertSee('No products found.')
+        ->call('selectProduct', 0, $product->id)
+        ->assertSet('lines.0.product_id', $product->id)
+        ->assertSet('lines.0.search', '');
+
+    $component->call('clearProduct', 0)->assertSet('lines.0.product_id', null);
+});
+
+test('batch number and prices are not shown on the page', function () {
+    makeStockProduct();
+
     Livewire::test(Opening::class)
-        ->set('lines.0.product_id', $product->id)
-        ->assertSet('lines.0.purchase_price', '10000')
-        ->assertSet('lines.0.selling_price', '12500');
+        ->assertDontSee('Batch number')
+        ->assertDontSee('Purchase price')
+        ->assertDontSee('Selling price');
 });
 
 test('it records current stock as a new batch', function () {
