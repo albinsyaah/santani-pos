@@ -18,12 +18,16 @@
     @livewireStyles
 </head>
 <body class="agropos">
-    <div class="app-shell">
+    <div class="app-shell" x-data="{ sidebarOpen: false }"
+         :class="{ 'sidebar-open': sidebarOpen }"
+         @keydown.escape.window="sidebarOpen = false">
 
         @include('partials.header')
 
         <div class="body-grid">
             @include('partials.sidebar')
+            <div class="sidebar-backdrop" x-show="sidebarOpen" x-cloak x-transition.opacity
+                 @click="sidebarOpen = false" aria-hidden="true"></div>
 
             <section class="main">
                 {{ $slot }}

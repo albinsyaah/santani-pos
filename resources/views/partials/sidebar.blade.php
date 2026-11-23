@@ -8,7 +8,7 @@
     $farmersGroupActive = request()->routeIs('customers.*') || request()->routeIs('customer-payments.*');
     $reportsGroupActive = request()->routeIs('reports.*');
 @endphp
-<aside class="sidebar">
+<aside class="sidebar" id="app-sidebar">
     <p class="side-label">{{ __('Main menu') }}</p>
     <nav class="side-nav" aria-label="Main">
         <a href="{{ route('dashboard') }}" wire:navigate class="side-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
