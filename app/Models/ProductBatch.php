@@ -48,6 +48,23 @@ class ProductBatch extends Model
         return $this->hasMany(PurchaseItem::class);
     }
 
+    /**
+     * Next auto-generated batch number for today, e.g. B261123-001.
+     * $offset lets a form reserve several consecutive numbers before any are saved.
+     */
+    public static function generateNumber(int $offset = 0): string
+    {
+        $prefix = 'B'.now()->format('ymd').'-';
+
+        $last = static::query()
+            ->where('batch_number', 'like', $prefix.'%')
+            ->pluck('batch_number')
+            ->map(fn (string $number) => (int) substr($number, strlen($prefix)))
+            ->max() ?? 0;
+
+        return $prefix.str_pad((string) ($last + 1 + $offset), 3, '0', STR_PAD_LEFT);
+    }
+
     // FEFO Scope: Get available non-expired batches ordered by earliest expiration
     public function scopeFefoAvailable(Builder $query): Builder
     {

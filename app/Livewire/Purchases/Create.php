@@ -54,7 +54,7 @@ class Create extends Component
     {
         return [
             'product_id' => null,
-            'batch_number' => '',
+            'batch_number' => ProductBatch::generateNumber(count($this->lines)),
             'quantity' => '',
             'unit_cost' => '',
             'selling_price' => '',
@@ -140,6 +140,14 @@ class Create extends Component
     public function save(): void
     {
         $this->error = '';
+
+        // A cleared batch number is filled in automatically instead of failing validation.
+        $blankCount = 0;
+        foreach ($this->lines as $i => $line) {
+            if (trim((string) ($line['batch_number'] ?? '')) === '') {
+                $this->lines[$i]['batch_number'] = ProductBatch::generateNumber($blankCount++);
+            }
+        }
 
         $validated = $this->validate([
             'supplierId' => ['required', 'exists:suppliers,id'],

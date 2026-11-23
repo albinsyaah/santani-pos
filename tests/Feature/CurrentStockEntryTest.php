@@ -82,3 +82,25 @@ test('required fields are validated', function () {
 
     expect(ProductBatch::count())->toBe(0);
 });
+
+test('the batch number is auto-filled and a blank one is generated on save', function () {
+    $product = makeStockProduct();
+    $prefix = 'B'.now()->format('ymd').'-';
+
+    $component = Livewire::test(Opening::class)
+        ->assertSet('lines.0.batch_number', $prefix.'001');
+
+    $component->call('addLine')->assertSet('lines.1.batch_number', $prefix.'002');
+
+    $component->set('lines.0.product_id', $product->id)
+        ->set('lines.0.batch_number', '')
+        ->set('lines.0.quantity', '5')
+        ->set('lines.0.expiration_date', now()->addYear()->format('Y-m-d'))
+        ->call('removeLine', 1)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(ProductBatch::first()->batch_number)->toBe($prefix.'001');
+
+    Livewire::test(Opening::class)->assertSet('lines.0.batch_number', $prefix.'002');
+});
