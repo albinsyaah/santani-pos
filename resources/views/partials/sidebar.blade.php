@@ -33,7 +33,11 @@
                     <x-tabler-point />
                     <span>{{ __('Pending Cart') }}</span>
                 </a>
-                <a href="{{ route('sales.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('sales.*') ? 'active' : '' }}">
+                <a href="{{ route('sales.tally') }}" wire:navigate class="side-sublink {{ request()->routeIs('sales.tally') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Sales Tally') }}</span>
+                </a>
+                <a href="{{ route('sales.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('sales.*') && ! request()->routeIs('sales.tally') ? 'active' : '' }}">
                     <x-tabler-point />
                     <span>{{ __('Sales History') }}</span>
                 </a>

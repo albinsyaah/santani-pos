@@ -440,5 +440,20 @@
     "Change product": "Ganti produk",
     "Search product by name, SKU or barcode…": "Cari produk berdasarkan nama, SKU, atau barcode…",
     "Batch numbers are generated automatically and prices come from the product catalog. Use Incoming Stock Entry for new deliveries.": "Nomor batch dibuat otomatis dan harga diambil dari katalog produk. Gunakan Entri Stok Masuk untuk pengiriman baru.",
-    "auto-filled": "terisi otomatis"
+    "auto-filled": "terisi otomatis",
+    "Sales Tally": "Rekap Penjualan Manual",
+    "Key in what was sold when the cashier was not used: product, quantity and date.": "Catat barang yang terjual saat kasir tidak dipakai: produk, jumlah, dan tanggal.",
+    "Products sold": "Produk terjual",
+    "Saved as a cash sale at the current product price. Stock is deducted, earliest expiry first.": "Disimpan sebagai penjualan tunai dengan harga produk saat ini. Stok dikurangi, yang paling cepat kedaluwarsa lebih dulu.",
+    "Quantity sold": "Jumlah terjual",
+    "Tally summary": "Ringkasan rekap",
+    ":count item row(s)": ":count baris produk",
+    "Total sales": "Total penjualan",
+    "Save tally": "Simpan rekap",
+    "Already tallied on this date": "Sudah direkap pada tanggal ini",
+    "Nothing tallied for this date yet.": "Belum ada rekap untuk tanggal ini.",
+    "No user account exists to record the sale under.": "Belum ada akun pengguna untuk mencatat penjualan.",
+    "Could not save the tally: :message": "Tidak dapat menyimpan rekap: :message",
+    "Tally saved as :invoice.": "Rekap disimpan sebagai :invoice.",
+    "date": "tanggal"
 }
