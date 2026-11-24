@@ -80,7 +80,7 @@
                                         <div class="product-picked">
                                             <span>
                                                 <strong>{{ $selected->name }}</strong>
-                                                <span class="hint">{{ $selected->sku }} &middot; {{ $selected->unit }}</span>
+                                                <span class="hint hide-mobile">{{ $selected->sku }} &middot; {{ $selected->unit }}</span>
                                             </span>
                                             <button type="button" class="kebab" wire:click="clearProduct({{ $index }})" aria-label="{{ __('Change product') }}">
                                                 <x-tabler-x />
@@ -97,7 +97,7 @@
                                                     <button type="button" class="product-result" wire:key="match-{{ $index }}-{{ $match->id }}"
                                                             wire:click="selectProduct({{ $index }}, {{ $match->id }})">
                                                         <span>{{ $match->name }}</span>
-                                                        <span class="hint">{{ $match->sku }} &middot; {{ $match->unit }}</span>
+                                                        <span class="hint hide-mobile">{{ $match->sku }} &middot; {{ $match->unit }}</span>
                                                     </button>
                                                 @empty
                                                     <p class="product-result-empty">{{ __('No products found.') }}</p>
