@@ -32,10 +32,6 @@
                         <p style="font-size:13.5px;font-weight:600;">{{ __('Stock on hand') }}</p>
                         <p style="font-size:11px;color:var(--ink-soft);margin-top:2px;">{{ __('Each row creates a batch, or tops up the batch if the batch number already exists for that product.') }}</p>
                     </div>
-                    <button type="button" class="btn btn-sm" wire:click="addLine">
-                        <x-tabler-plus stroke-width="2.5" />
-                        {{ __('Add row') }}
-                    </button>
                 </div>
 
                 <div class="entry-lines">
@@ -105,6 +101,11 @@
                             </div>
                         </div>
                     @endforeach
+
+                    <button type="button" class="btn btn-sm btn-block" wire:click="addLine">
+                        <x-tabler-plus stroke-width="2.5" />
+                        {{ __('Add row') }}
+                    </button>
                 </div>
 
                 @error('lines')
@@ -113,7 +114,7 @@
             </div>
 
             <div class="rail">
-                <div class="card stat-card">
+                <div class="card stat-card" style="flex-basis:auto;">
                     <div class="card-head" style="padding:0;">
                         <p style="font-size:13.5px;font-weight:600;">{{ __('Entry summary') }}</p>
                     </div>
@@ -128,7 +129,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card" style="flex-basis:auto;">
                     <div class="card-body">
                         <p class="stat-caption" style="margin-top:10px;">
                             {{ __('Batch numbers are generated automatically and prices come from the product catalog. Use Incoming Stock Entry for new deliveries.') }}

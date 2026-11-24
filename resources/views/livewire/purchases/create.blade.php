@@ -63,25 +63,29 @@
                         </div>
                     </div>
 
-                    <div class="card-body">
-                        <div class="tally-head">
-                            <span>{{ __('Product') }}</span>
-                            <span>{{ __('Quantity') }}</span>
-                        </div>
-
+                    <div class="entry-lines">
                         @foreach ($lines as $index => $line)
-                            <div class="tally-line" wire:key="line-{{ $index }}">
-                            <div class="tally-row">
-                                <div class="tally-product">
-                                    <label class="tally-label">{{ __('Product') }}</label>
+                        <div class="entry-line" wire:key="line-{{ $index }}">
+                            <div class="entry-line-head">
+                                <span class="entry-line-title">{{ __('Item :number', ['number' => $index + 1]) }}</span>
+                                @if (count($lines) > 1)
+                                    <button type="button" class="kebab" wire:click="removeLine({{ $index }})" aria-label="{{ __('Remove row') }}">
+                                        <x-tabler-trash />
+                                    </button>
+                                @endif
+                            </div>
+
+                            <div class="entry-grid">
+                                <div class="field span-2">
+                                    <label>{{ __('Product') }}</label>
                                     @if ($line['product_id'] && ($selected = $this->selectedProducts->get($line['product_id'])))
                                         <div class="product-picked">
                                             <span>
                                                 <strong>{{ $selected->name }}</strong>
                                                 <span class="hint hide-mobile">{{ $selected->sku }} &middot; {{ $selected->unit }}</span>
                                             </span>
-                                            <button type="button" class="kebab" wire:click="clearProduct({{ $index }})" aria-label="{{ __('Change product') }}">
-                                                <x-tabler-x />
+                                            <button type="button" class="btn btn-sm" wire:click="clearProduct({{ $index }})">
+                                                {{ __('Change product') }}
                                             </button>
                                         </div>
                                     @else
@@ -106,41 +110,36 @@
                                     @error('lines.'.$index.'.product_id') <span class="error">{{ $message }}</span> @enderror
                                 </div>
 
-                                <div class="tally-qty">
-                                    <label class="tally-label">{{ __('Quantity') }}</label>
-                                    <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror"
-                                           wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0" aria-label="{{ __('Quantity') }}">
+                                <div class="field">
+                                    <label>{{ __('Quantity') }}</label>
+                                    <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0">
                                     @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
                                 </div>
 
-                                @if (count($lines) > 1)
-                                    <button type="button" class="kebab" wire:click="removeLine({{ $index }})" aria-label="{{ __('Remove row') }}">
-                                        <x-tabler-trash />
-                                    </button>
-                                @else
-                                    <span class="kebab-spacer"></span>
-                                @endif
-                            </div>
-
-                            <div class="tally-prices">
                                 <div class="field">
                                     <label>{{ __('Purchase price (Rp)') }}</label>
                                     <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.unit_cost') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.unit_cost" placeholder="0">
                                     @error('lines.'.$index.'.unit_cost') <span class="error">{{ $message }}</span> @enderror
                                 </div>
+
                                 <div class="field">
                                     <label>{{ __('Selling price (Rp)') }}</label>
                                     <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.selling_price') invalid @enderror" wire:model="lines.{{ $index }}.selling_price" placeholder="0">
                                     @error('lines.'.$index.'.selling_price') <span class="error">{{ $message }}</span> @enderror
                                 </div>
                             </div>
+
+                            <div class="entry-line-foot">
+                                <span>{{ __('Subtotal') }}</span>
+                                <span class="entry-line-total tabular">Rp {{ number_format((float) ($line['quantity'] ?: 0) * (float) ($line['unit_cost'] ?: 0), 0, ',', '.') }}</span>
                             </div>
+                        </div>
                         @endforeach
 
-                        <button type="button" class="btn btn-sm tally-add" wire:click="addLine">
-                            <x-tabler-plus stroke-width="2.5" />
-                            {{ __('Add row') }}
-                        </button>
+                        <button type="button" class="btn btn-sm btn-block" wire:click="addLine">
+                        <x-tabler-plus stroke-width="2.5" />
+                        {{ __('Add row') }}
+                            </button>
                     </div>
 
                     @error('lines')
@@ -150,7 +149,7 @@
             </div>
 
             <div class="rail">
-                <div class="card stat-card">
+                <div class="card stat-card" style="flex-basis:auto;">
                     <div class="card-head" style="padding:0;">
                         <p style="font-size:13.5px;font-weight:600;">{{ __('Entry summary') }}</p>
                     </div>
@@ -165,7 +164,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card" style="flex-basis:auto;">
                     <div class="card-head">
                         <p style="font-size:13.5px;font-weight:600;">{{ __('Payment') }}</p>
                     </div>
