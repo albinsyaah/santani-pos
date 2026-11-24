@@ -57,13 +57,13 @@ class DemoDataSeeder extends Seeder
 
         // ---- Suppliers ---------------------------------------------------
         $suppliers = collect([
-            ['name' => 'PT Pupuk Nusantara', 'contact_person' => 'Andi Wijaya', 'phone' => '021-5550101'],
-            ['name' => 'CV Agro Kimia Jaya', 'contact_person' => 'Rina Kusuma', 'phone' => '021-5550202'],
-            ['name' => 'Tani Makmur Distributor', 'contact_person' => 'Dedi Hartono', 'phone' => '021-5550303'],
+            ['name' => 'RIIBRI', 'contact_person' => '', 'phone' => ''],
+            ['name' => 'Tunas Tani Makmur', 'contact_person' => '', 'phone' => ''],
+            ['name' => 'Pupuk Subsidi', 'contact_person' => '', 'phone' => ''],
         ])->map(fn ($s) => Supplier::firstOrCreate(['name' => $s['name']], [
             'contact_person' => $s['contact_person'],
             'phone' => $s['phone'],
-            'address' => 'Kawasan Industri, Karawang, Jawa Barat',
+            'address' => '',
         ]));
 
         // ---- Products ------------------------------------------------------
