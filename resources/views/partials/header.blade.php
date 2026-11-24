@@ -7,9 +7,6 @@
         </button>
 
         <a href="{{ route('dashboard') }}" wire:navigate class="brand">
-            <span class="brand-mark">
-                <x-tabler-leaf stroke-width="2.5" style="color:#c6f135" />
-            </span>
             Santani
         </a>
     </div>
@@ -19,11 +16,6 @@
             <a href="{{ route('locale.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
             <a href="{{ route('locale.switch', 'id') }}" class="{{ app()->getLocale() === 'id' ? 'active' : '' }}">ID</a>
         </div>
-
-        <button class="icon-btn notif square" aria-label="{{ __('Notifications') }}">
-            <x-tabler-bell />
-            <span class="notif-dot"></span>
-        </button>
     </div>
 
     <div class="topbar-right">
@@ -34,6 +26,10 @@
         <button class="icon-btn">
             <x-tabler-user-circle />
             <span class="owner-label">{{ $currentUser?->role?->name ?? __('Guest') }}</span>
+        </button>
+        <button class="icon-btn notif square" aria-label="{{ __('Notifications') }}">
+            <x-tabler-bell />
+            <span class="notif-dot"></span>
         </button>
     </div>
 </header>
