@@ -101,3 +101,33 @@ test('product and quantity are required', function () {
         ->call('save')
         ->assertHasErrors(['supplierId', 'lines.0.product_id', 'lines.0.quantity']);
 });
+
+test('paid to supplier follows the total cost until edited', function () {
+    $product = purchaseProduct();
+
+    $component = Livewire::test(Create::class)
+        ->call('selectProduct', 0, $product->id)
+        ->set('lines.0.quantity', '10')
+        ->assertSet('paidAmount', '100000')
+        ->set('lines.0.quantity', '12')
+        ->assertSet('paidAmount', '120000');
+
+    $component->set('paidAmount', '50000')
+        ->set('lines.0.quantity', '20')
+        ->assertSet('paidAmount', '50000');
+});
+
+test('the default paid amount records the delivery as paid', function () {
+    $product = purchaseProduct();
+    $supplier = Supplier::create(['name' => 'PT Tani']);
+
+    Livewire::test(Create::class)
+        ->set('supplierId', $supplier->id)
+        ->call('selectProduct', 0, $product->id)
+        ->set('lines.0.quantity', '5')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Purchase::first()->payment_status)->toBe('paid')
+        ->and((float) Purchase::first()->paid_amount)->toBe(50000.0);
+});

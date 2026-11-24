@@ -187,7 +187,7 @@
                         </div>
 
                         <p class="stat-caption" style="margin-top:10px;">
-                            {{ __('Leave the paid amount empty to record this delivery as unpaid supplier credit.') }}
+                            {{ __('Paid in full by default. Lower or clear the amount to record the rest as supplier credit.') }}
                         </p>
 
                         <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;" wire:loading.attr="disabled" wire:target="save">

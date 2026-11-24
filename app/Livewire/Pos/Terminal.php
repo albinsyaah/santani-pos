@@ -34,6 +34,9 @@ class Terminal extends Component
 
     public string $paidAmount = '';
 
+    /** Once the cashier types an amount, it stops following the grand total. */
+    public bool $paidEdited = false;
+
     public string $error = '';
 
     public string $success = '';
@@ -81,13 +84,13 @@ class Terminal extends Component
             'tax' => (float) ($this->tax ?: 0),
         ]);
 
-        $this->reset(['cart', 'customerId', 'discount', 'tax', 'paidAmount']);
+        $this->reset(['cart', 'customerId', 'discount', 'tax', 'paidAmount', 'paidEdited']);
         $this->paymentMethod = 'cash';
         $this->discount = '0';
         $this->tax = '0';
         $this->error = '';
         $this->success = __('Cart held. Resume it anytime from Pending Cart.');
-        unset($this->products);
+        unset($this->products, $this->subtotal, $this->grandTotal, $this->changeAmount);
     }
 
     public function addToCart(int $productId): void
@@ -302,15 +305,25 @@ class Terminal extends Component
             return;
         }
 
-        $this->reset(['cart', 'customerId', 'discount', 'tax', 'paidAmount']);
+        $this->reset(['cart', 'customerId', 'discount', 'tax', 'paidAmount', 'paidEdited']);
         $this->paymentMethod = 'cash';
         $this->discount = '0';
         $this->tax = '0';
-        unset($this->products);
+        unset($this->products, $this->subtotal, $this->grandTotal, $this->changeAmount);
+    }
+
+    public function updatedPaidAmount(): void
+    {
+        $this->paidEdited = true;
     }
 
     public function render()
     {
+        // "Amount paid" follows the grand total until it is edited by hand.
+        if (! $this->paidEdited) {
+            $this->paidAmount = $this->grandTotal > 0 ? (string) (float) $this->grandTotal : '';
+        }
+
         return view('livewire.pos.terminal');
     }
 }

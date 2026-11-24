@@ -24,6 +24,9 @@ class Create extends Component
 
     public string $paidAmount = '';
 
+    /** Once the operator types a paid amount, it stops following the total cost. */
+    public bool $paidEdited = false;
+
     public string $note = '';
 
     /**
@@ -264,8 +267,18 @@ class Create extends Component
         $this->redirectRoute('purchases.index', navigate: true);
     }
 
+    public function updatedPaidAmount(): void
+    {
+        $this->paidEdited = true;
+    }
+
     public function render()
     {
+        // "Paid to supplier" follows the total cost until it is edited by hand.
+        if (! $this->paidEdited) {
+            $this->paidAmount = $this->subtotal > 0 ? (string) (float) $this->subtotal : '';
+        }
+
         return view('livewire.purchases.create');
     }
 }
