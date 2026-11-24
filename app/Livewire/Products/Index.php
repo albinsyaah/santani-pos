@@ -44,7 +44,7 @@ class Index extends Component
 
     public string $sellingPrice = '';
 
-    public string $minStockLevel = '10';
+    public string $minStockLevel = '1';
 
     public bool $isRestricted = false;
 
