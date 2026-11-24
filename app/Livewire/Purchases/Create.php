@@ -29,7 +29,7 @@ class Create extends Component
     /**
      * Stock lines being received.
      *
-     * @var array<int, array{product_id:?int, batch_number:string, quantity:string, unit_cost:string, selling_price:string, manufactured_date:string, expiration_date:string}>
+     * @var array<int, array{product_id:?int, search:string, batch_number:string, quantity:string}>
      */
     public array $lines = [];
 
@@ -54,12 +54,10 @@ class Create extends Component
     {
         return [
             'product_id' => null,
+            'search' => '',
+            // Not shown on the form: every delivery line gets its own generated batch number.
             'batch_number' => ProductBatch::generateNumber(count($this->lines)),
             'quantity' => '',
-            'unit_cost' => '',
-            'selling_price' => '',
-            'manufactured_date' => '',
-            'expiration_date' => '',
         ];
     }
 
@@ -79,36 +77,52 @@ class Create extends Component
         }
     }
 
-    /**
-     * Prefill cost/price from the product catalog when a product is picked,
-     * so the operator only has to correct what actually differs on the invoice.
-     */
-    public function updatedLines(mixed $value, string $key): void
+    /** Pick a product from the search results for the given row. */
+    public function selectProduct(int $index, int $productId): void
     {
-        if (! str_ends_with($key, '.product_id') || ! $value) {
+        if (! isset($this->lines[$index]) || ! Product::whereKey($productId)->exists()) {
             return;
         }
 
-        $index = (int) explode('.', $key)[0];
-        $product = Product::find($value);
+        $this->lines[$index]['product_id'] = $productId;
+        $this->lines[$index]['search'] = '';
+    }
 
-        if (! $product) {
-            return;
-        }
-
-        if (($this->lines[$index]['unit_cost'] ?? '') === '') {
-            $this->lines[$index]['unit_cost'] = (string) (float) $product->purchase_price;
-        }
-
-        if (($this->lines[$index]['selling_price'] ?? '') === '') {
-            $this->lines[$index]['selling_price'] = (string) (float) $product->selling_price;
+    public function clearProduct(int $index): void
+    {
+        if (isset($this->lines[$index])) {
+            $this->lines[$index]['product_id'] = null;
         }
     }
 
-    #[Computed]
-    public function products()
+    /** Products matching a row's search text (name, SKU, barcode or active ingredient). */
+    public function searchProducts(string $term)
     {
-        return Product::orderBy('name')->get();
+        $term = trim($term);
+
+        if ($term === '') {
+            return collect();
+        }
+
+        return Product::query()
+            ->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                    ->orWhere('sku', 'like', "%{$term}%")
+                    ->orWhere('barcode', 'like', "%{$term}%")
+                    ->orWhere('active_ingredient', 'like', "%{$term}%");
+            })
+            ->orderBy('name')
+            ->limit(8)
+            ->get();
+    }
+
+    /** Products already chosen in the rows, keyed by id, for display and costing. */
+    #[Computed]
+    public function selectedProducts()
+    {
+        $ids = collect($this->lines)->pluck('product_id')->filter()->unique();
+
+        return Product::whereIn('id', $ids)->get()->keyBy('id');
     }
 
     #[Computed]
@@ -120,9 +134,12 @@ class Create extends Component
     #[Computed]
     public function subtotal(): float
     {
-        return collect($this->lines)->sum(
-            fn ($line) => (float) ($line['quantity'] ?: 0) * (float) ($line['unit_cost'] ?: 0)
-        );
+        // Unit cost is not typed in: it comes from the product's catalog purchase price.
+        return collect($this->lines)->sum(function ($line) {
+            $product = $line['product_id'] ? $this->selectedProducts->get($line['product_id']) : null;
+
+            return $product ? (float) ($line['quantity'] ?: 0) * (float) $product->purchase_price : 0;
+        });
     }
 
     #[Computed]
@@ -158,10 +175,6 @@ class Create extends Component
             'lines.*.product_id' => ['required', 'exists:products,id'],
             'lines.*.batch_number' => ['required', 'string', 'max:100'],
             'lines.*.quantity' => ['required', 'integer', 'min:1'],
-            'lines.*.unit_cost' => ['required', 'numeric', 'min:0'],
-            'lines.*.selling_price' => ['nullable', 'numeric', 'min:0'],
-            'lines.*.manufactured_date' => ['nullable', 'date'],
-            'lines.*.expiration_date' => ['nullable', 'date', 'after:today'],
         ], [], [
             'supplierId' => __('supplier'),
             'purchaseNumber' => __('purchase number'),
@@ -169,10 +182,6 @@ class Create extends Component
             'lines.*.product_id' => __('product'),
             'lines.*.batch_number' => __('batch number'),
             'lines.*.quantity' => __('quantity'),
-            'lines.*.unit_cost' => __('unit cost'),
-            'lines.*.selling_price' => __('selling price'),
-            'lines.*.manufactured_date' => __('manufactured date'),
-            'lines.*.expiration_date' => __('expiration date'),
         ]);
 
         $total = $this->subtotal;
@@ -191,9 +200,12 @@ class Create extends Component
                     'note' => ($validated['note'] ?? '') ?: null,
                 ]);
 
+                $products = Product::whereIn('id', collect($validated['lines'])->pluck('product_id'))->get()->keyBy('id');
+
                 foreach ($validated['lines'] as $line) {
+                    $product = $products[$line['product_id']];
                     $quantity = (int) $line['quantity'];
-                    $unitCost = (float) $line['unit_cost'];
+                    $unitCost = (float) $product->purchase_price;
 
                     // Re-use the batch when the same batch number arrives again for
                     // the same product; otherwise start a fresh batch record.
@@ -202,14 +214,10 @@ class Create extends Component
                         'batch_number' => $line['batch_number'],
                     ]);
 
-                    $sellingPrice = $line['selling_price'] ?? '';
-
+                    // Prices come from the catalog; manufactured/expiry dates are not
+                    // asked for here, so a batch that already has them keeps them.
                     $batch->purchase_price = $unitCost;
-                    $batch->selling_price = $sellingPrice !== '' && $sellingPrice !== null
-                        ? (float) $sellingPrice
-                        : ($batch->selling_price ?? Product::find($line['product_id'])?->selling_price);
-                    $batch->manufactured_date = ($line['manufactured_date'] ?? '') ?: null;
-                    $batch->expiration_date = ($line['expiration_date'] ?? '') ?: null;
+                    $batch->selling_price ??= $product->selling_price;
                     $batch->stock_quantity = (int) $batch->stock_quantity + $quantity;
                     $batch->save();
 

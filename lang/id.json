@@ -455,5 +455,7 @@
     "No user account exists to record the sale under.": "Belum ada akun pengguna untuk mencatat penjualan.",
     "Could not save the tally: :message": "Tidak dapat menyimpan rekap: :message",
     "Tally saved as :invoice.": "Rekap disimpan sebagai :invoice.",
-    "date": "tanggal"
+    "date": "tanggal",
+    "Pick the product and the quantity received. Batch numbers and prices are filled in automatically.": "Pilih produk dan jumlah yang diterima. Nomor batch dan harga terisi otomatis.",
+    "Receive stock from a supplier: just pick the products and the quantities.": "Terima stok dari pemasok: cukup pilih produk dan jumlahnya."
 }

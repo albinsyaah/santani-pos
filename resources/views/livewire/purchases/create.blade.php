@@ -2,7 +2,7 @@
     <div class="page-head">
         <div>
             <h1>{{ __('Incoming Stock Entry') }}</h1>
-            <p>{{ __('Receive stock from a supplier and record batch numbers and expiration dates.') }}</p>
+            <p>{{ __('Receive stock from a supplier: just pick the products and the quantities.') }}</p>
         </div>
         <a href="{{ route('purchases.index') }}" wire:navigate class="btn">
             <x-tabler-history />
@@ -59,7 +59,7 @@
                     <div class="card-head">
                         <div>
                             <p style="font-size:13.5px;font-weight:600;">{{ __('Stock received') }}</p>
-                            <p style="font-size:11px;color:var(--ink-soft);margin-top:2px;">{{ __('Each row creates or tops up a batch. Expiration dates drive FEFO selling.') }}</p>
+                            <p style="font-size:11px;color:var(--ink-soft);margin-top:2px;">{{ __('Pick the product and the quantity received. Batch numbers and prices are filled in automatically.') }}</p>
                         </div>
                         <button type="button" class="btn btn-sm" wire:click="addLine">
                             <x-tabler-plus stroke-width="2.5" />
@@ -67,71 +67,60 @@
                         </button>
                     </div>
 
-                    <div class="entry-lines">
+                    <div class="card-body">
+                        <div class="tally-head">
+                            <span>{{ __('Product') }}</span>
+                            <span>{{ __('Quantity') }}</span>
+                        </div>
+
                         @foreach ($lines as $index => $line)
-                            <div class="entry-line" wire:key="line-{{ $index }}">
-                                <div class="entry-line-head">
-                                    <span class="entry-line-title">{{ __('Item :number', ['number' => $index + 1]) }}</span>
-                                    @if (count($lines) > 1)
-                                        <button type="button" class="kebab" wire:click="removeLine({{ $index }})" aria-label="{{ __('Remove row') }}">
-                                            <x-tabler-trash />
-                                        </button>
+                            <div class="tally-row" wire:key="line-{{ $index }}">
+                                <div class="tally-product">
+                                    @if ($line['product_id'] && ($selected = $this->selectedProducts->get($line['product_id'])))
+                                        <div class="product-picked">
+                                            <span>
+                                                <strong>{{ $selected->name }}</strong>
+                                                <span class="hint">{{ $selected->sku }} &middot; {{ $selected->unit }}</span>
+                                            </span>
+                                            <button type="button" class="kebab" wire:click="clearProduct({{ $index }})" aria-label="{{ __('Change product') }}">
+                                                <x-tabler-x />
+                                            </button>
+                                        </div>
+                                    @else
+                                        <input type="search" class="input @error('lines.'.$index.'.product_id') invalid @enderror"
+                                               wire:model.live.debounce.250ms="lines.{{ $index }}.search"
+                                               placeholder="{{ __('Search product by name, SKU or barcode…') }}" autocomplete="off">
+                                        @if (trim($line['search']) !== '')
+                                            @php $matches = $this->searchProducts($line['search']); @endphp
+                                            <div class="product-results">
+                                                @forelse ($matches as $match)
+                                                    <button type="button" class="product-result" wire:key="match-{{ $index }}-{{ $match->id }}"
+                                                            wire:click="selectProduct({{ $index }}, {{ $match->id }})">
+                                                        <span>{{ $match->name }}</span>
+                                                        <span class="hint">{{ $match->sku }} &middot; {{ $match->unit }}</span>
+                                                    </button>
+                                                @empty
+                                                    <p class="product-result-empty">{{ __('No products found.') }}</p>
+                                                @endforelse
+                                            </div>
+                                        @endif
                                     @endif
+                                    @error('lines.'.$index.'.product_id') <span class="error">{{ $message }}</span> @enderror
                                 </div>
 
-                                <div class="entry-grid">
-                                    <div class="field span-2">
-                                        <label>{{ __('Product') }}</label>
-                                        <select class="select @error('lines.'.$index.'.product_id') invalid @enderror" wire:model.live="lines.{{ $index }}.product_id">
-                                            <option value="">{{ __('Select a product') }}</option>
-                                            @foreach ($this->products as $product)
-                                                <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->unit }})</option>
-                                            @endforeach
-                                        </select>
-                                        @error('lines.'.$index.'.product_id') <span class="error">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="field">
-                                        <label>{{ __('Batch number') }}</label>
-                                        <input type="text" class="input @error('lines.'.$index.'.batch_number') invalid @enderror" wire:model="lines.{{ $index }}.batch_number" placeholder="{{ __('e.g. B-2026-08') }}">
-                                        @error('lines.'.$index.'.batch_number') <span class="error">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="field">
-                                        <label>{{ __('Quantity') }}</label>
-                                        <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0">
-                                        @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="field">
-                                        <label>{{ __('Unit cost (Rp)') }}</label>
-                                        <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.unit_cost') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.unit_cost" placeholder="0">
-                                        @error('lines.'.$index.'.unit_cost') <span class="error">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="field">
-                                        <label>{{ __('Selling price (Rp)') }}</label>
-                                        <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.selling_price') invalid @enderror" wire:model="lines.{{ $index }}.selling_price" placeholder="0">
-                                        @error('lines.'.$index.'.selling_price') <span class="error">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="field">
-                                        <label>{{ __('Manufactured') }} <span class="hint">({{ __('optional') }})</span></label>
-                                        <input type="date" class="input @error('lines.'.$index.'.manufactured_date') invalid @enderror" wire:model="lines.{{ $index }}.manufactured_date">
-                                        @error('lines.'.$index.'.manufactured_date') <span class="error">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="field">
-                                        <label>{{ __('Expires') }} <span class="hint">({{ __('optional') }})</span></label>
-                                        <input type="date" class="input @error('lines.'.$index.'.expiration_date') invalid @enderror" wire:model="lines.{{ $index }}.expiration_date">
-                                        @error('lines.'.$index.'.expiration_date') <span class="error">{{ $message }}</span> @enderror
-                                    </div>
+                                <div class="tally-qty">
+                                    <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror"
+                                           wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0" aria-label="{{ __('Quantity') }}">
+                                    @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
                                 </div>
 
-                                <div class="entry-line-foot">
-                                    <span>{{ __('Subtotal') }}</span>
-                                    <span class="entry-line-total tabular">Rp {{ number_format((float) ($line['quantity'] ?: 0) * (float) ($line['unit_cost'] ?: 0), 0, ',', '.') }}</span>
-                                </div>
+                                @if (count($lines) > 1)
+                                    <button type="button" class="kebab" wire:click="removeLine({{ $index }})" aria-label="{{ __('Remove row') }}">
+                                        <x-tabler-trash />
+                                    </button>
+                                @else
+                                    <span class="kebab-spacer"></span>
+                                @endif
                             </div>
                         @endforeach
                     </div>
