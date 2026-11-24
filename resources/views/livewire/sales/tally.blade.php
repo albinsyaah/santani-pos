@@ -35,8 +35,10 @@
                 </div>
 
                 @foreach ($lines as $index => $line)
-                    <div class="tally-row" wire:key="line-{{ $index }}">
+                    <div class="tally-line" wire:key="line-{{ $index }}">
+                    <div class="tally-row">
                         <div class="tally-product">
+                            <label class="tally-label">{{ __('Product') }}</label>
                             @if ($line['product_id'] && ($selected = $this->selectedProducts->get($line['product_id'])))
                                 <div class="product-picked">
                                     <span>
@@ -70,6 +72,7 @@
                         </div>
 
                         <div class="tally-qty">
+                            <label class="tally-label">{{ __('Quantity sold') }}</label>
                             <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror"
                                    wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0" aria-label="{{ __('Quantity sold') }}">
                             @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
@@ -83,11 +86,12 @@
                             <span class="kebab-spacer"></span>
                         @endif
                     </div>
+                    </div>
                 @endforeach
 
                 @error('lines') <span class="error">{{ $message }}</span> @enderror
 
-                <button type="button" class="btn btn-sm" wire:click="addLine" style="margin-top:6px;">
+                <button type="button" class="btn btn-sm tally-add" wire:click="addLine">
                     <x-tabler-plus stroke-width="2.5" />
                     {{ __('Add row') }}
                 </button>

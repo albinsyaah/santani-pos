@@ -61,10 +61,6 @@
                             <p style="font-size:13.5px;font-weight:600;">{{ __('Stock received') }}</p>
                             <p style="font-size:11px;color:var(--ink-soft);margin-top:2px;">{{ __('Pick the product, quantity and prices. Batch numbers are filled in automatically; a changed price also updates the product.') }}</p>
                         </div>
-                        <button type="button" class="btn btn-sm" wire:click="addLine">
-                            <x-tabler-plus stroke-width="2.5" />
-                            {{ __('Add row') }}
-                        </button>
                     </div>
 
                     <div class="card-body">
@@ -77,6 +73,7 @@
                             <div class="tally-line" wire:key="line-{{ $index }}">
                             <div class="tally-row">
                                 <div class="tally-product">
+                                    <label class="tally-label">{{ __('Product') }}</label>
                                     @if ($line['product_id'] && ($selected = $this->selectedProducts->get($line['product_id'])))
                                         <div class="product-picked">
                                             <span>
@@ -110,6 +107,7 @@
                                 </div>
 
                                 <div class="tally-qty">
+                                    <label class="tally-label">{{ __('Quantity') }}</label>
                                     <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror"
                                            wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0" aria-label="{{ __('Quantity') }}">
                                     @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
@@ -138,6 +136,11 @@
                             </div>
                             </div>
                         @endforeach
+
+                        <button type="button" class="btn btn-sm tally-add" wire:click="addLine">
+                            <x-tabler-plus stroke-width="2.5" />
+                            {{ __('Add row') }}
+                        </button>
                     </div>
 
                     @error('lines')
