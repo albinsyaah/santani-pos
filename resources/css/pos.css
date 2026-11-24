@@ -281,6 +281,12 @@
 .product-result:hover{ background:#fafbf7; }
 .hide-mobile{}
 @media (max-width:860px){ .hide-mobile{ display:none !important; } }
+.tally-line{ margin-bottom:14px; }
+.tally-line .tally-row{ margin-bottom:6px; }
+.tally-prices{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding-right:46px; }
+.tally-prices .field{ margin-bottom:0; }
+.tally-prices label{ font-size:11.5px; color:var(--ink-soft); }
+@media (max-width:520px){ .tally-prices{ padding-right:42px; } }
 .tally-date{ max-width:200px; margin-bottom:16px; }
 .tally-head, .tally-row{ display:grid; grid-template-columns:minmax(0,1fr) 110px 36px; gap:10px; align-items:start; }
 .tally-head{ font-size:11.5px; color:var(--ink-soft); margin-bottom:6px; }

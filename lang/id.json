@@ -457,5 +457,7 @@
     "Tally saved as :invoice.": "Rekap disimpan sebagai :invoice.",
     "date": "tanggal",
     "Pick the product and the quantity received. Batch numbers and prices are filled in automatically.": "Pilih produk dan jumlah yang diterima. Nomor batch dan harga terisi otomatis.",
-    "Receive stock from a supplier: just pick the products and the quantities.": "Terima stok dari pemasok: cukup pilih produk dan jumlahnya."
+    "Receive stock from a supplier: just pick the products and the quantities.": "Terima stok dari pemasok: cukup pilih produk dan jumlahnya.",
+    "Pick the product, quantity and prices. Batch numbers are filled in automatically; a changed price also updates the product.": "Pilih produk, jumlah, dan harga. Nomor batch terisi otomatis; harga yang diubah juga memperbarui harga produk.",
+    "Receive stock from a supplier: pick the products, quantities and prices.": "Terima stok dari pemasok: pilih produk, jumlah, dan harga."
 }

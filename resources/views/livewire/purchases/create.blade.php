@@ -2,7 +2,7 @@
     <div class="page-head">
         <div>
             <h1>{{ __('Incoming Stock Entry') }}</h1>
-            <p>{{ __('Receive stock from a supplier: just pick the products and the quantities.') }}</p>
+            <p>{{ __('Receive stock from a supplier: pick the products, quantities and prices.') }}</p>
         </div>
         <a href="{{ route('purchases.index') }}" wire:navigate class="btn">
             <x-tabler-history />
@@ -59,7 +59,7 @@
                     <div class="card-head">
                         <div>
                             <p style="font-size:13.5px;font-weight:600;">{{ __('Stock received') }}</p>
-                            <p style="font-size:11px;color:var(--ink-soft);margin-top:2px;">{{ __('Pick the product and the quantity received. Batch numbers and prices are filled in automatically.') }}</p>
+                            <p style="font-size:11px;color:var(--ink-soft);margin-top:2px;">{{ __('Pick the product, quantity and prices. Batch numbers are filled in automatically; a changed price also updates the product.') }}</p>
                         </div>
                         <button type="button" class="btn btn-sm" wire:click="addLine">
                             <x-tabler-plus stroke-width="2.5" />
@@ -74,7 +74,8 @@
                         </div>
 
                         @foreach ($lines as $index => $line)
-                            <div class="tally-row" wire:key="line-{{ $index }}">
+                            <div class="tally-line" wire:key="line-{{ $index }}">
+                            <div class="tally-row">
                                 <div class="tally-product">
                                     @if ($line['product_id'] && ($selected = $this->selectedProducts->get($line['product_id'])))
                                         <div class="product-picked">
@@ -121,6 +122,20 @@
                                 @else
                                     <span class="kebab-spacer"></span>
                                 @endif
+                            </div>
+
+                            <div class="tally-prices">
+                                <div class="field">
+                                    <label>{{ __('Purchase price (Rp)') }}</label>
+                                    <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.unit_cost') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.unit_cost" placeholder="0">
+                                    @error('lines.'.$index.'.unit_cost') <span class="error">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="field">
+                                    <label>{{ __('Selling price (Rp)') }}</label>
+                                    <input type="number" step="0.01" min="0" class="input @error('lines.'.$index.'.selling_price') invalid @enderror" wire:model="lines.{{ $index }}.selling_price" placeholder="0">
+                                    @error('lines.'.$index.'.selling_price') <span class="error">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
                             </div>
                         @endforeach
                     </div>
