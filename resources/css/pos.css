@@ -333,7 +333,28 @@
 
 /* ---- 14. Pagination ----------------------------------------------------- */
 .pagination-wrap{ display:flex; justify-content:space-between; align-items:center; padding:14px 16px; font-size:12px; color:var(--ink-soft); flex-wrap:wrap; gap:10px; }
-.pagination-wrap nav ul{ display:flex; gap:4px; list-style:none; margin:0; padding:0; }
+/* Custom pagination (resources/views/vendor/livewire/tailwind.blade.php) */
+.pg{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.pg-btn{
+  min-width:34px; height:34px; padding:0 10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid var(--line); border-radius:10px;
+  background:var(--surface); color:var(--ink);
+  font-family:inherit; font-size:12.5px; font-weight:600; line-height:1;
+  cursor:pointer; transition:background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.pg-btn svg{ width:16px; height:16px; }
+button.pg-btn:hover{ background:var(--bg); border-color:#d3d8c8; }
+button.pg-btn:active{ transform:scale(.96); }
+.pg-btn.is-active{ background:var(--lime); border-color:var(--lime-deep); color:var(--ink); box-shadow:0 6px 14px rgba(169,217,40,.28); cursor:default; }
+.pg-btn.is-disabled{ opacity:.45; cursor:not-allowed; background:var(--bg); }
+.pg-btn[disabled]{ opacity:.6; cursor:progress; }
+.pg-dots{ min-width:20px; text-align:center; color:var(--ink-soft); font-weight:600; letter-spacing:.05em; }
+@media (max-width:520px){
+  .pagination-wrap{ justify-content:center; text-align:center; }
+  .pg-hide-sm{ display:none; }
+  .pg-btn{ min-width:40px; height:40px; }
+}
 
 /* ---- 15. Modal ----------------------------------------------------- */
 .modal-backdrop{ position:fixed; inset:0; background:rgba(28,31,26,.45); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; }

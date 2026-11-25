@@ -460,5 +460,9 @@
     "Receive stock from a supplier: just pick the products and the quantities.": "Terima stok dari pemasok: cukup pilih produk dan jumlahnya.",
     "Pick the product, quantity and prices. Batch numbers are filled in automatically; a changed price also updates the product.": "Pilih produk, jumlah, dan harga. Nomor batch terisi otomatis; harga yang diubah juga memperbarui harga produk.",
     "Receive stock from a supplier: pick the products, quantities and prices.": "Terima stok dari pemasok: pilih produk, jumlah, dan harga.",
-    "Paid in full by default. Lower or clear the amount to record the rest as supplier credit.": "Dibayar lunas secara default. Kurangi atau kosongkan jumlah untuk mencatat sisanya sebagai hutang pemasok."
+    "Paid in full by default. Lower or clear the amount to record the rest as supplier credit.": "Dibayar lunas secara default. Kurangi atau kosongkan jumlah untuk mencatat sisanya sebagai hutang pemasok.",
+    "Pagination": "Navigasi halaman",
+    "Previous": "Sebelumnya",
+    "Next": "Berikutnya",
+    "Go to page :page": "Ke halaman :page"
 }
