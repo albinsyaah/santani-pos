@@ -269,6 +269,10 @@
 .entry-grid .field.span-2{ grid-column:span 2; }
 .product-picked{ display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:38px; padding:4px 6px 4px 12px; border:1px solid var(--line); border-radius:10px; font-size:13px; }
 .product-picked .hint{ display:block; }
+.seg{ display:inline-flex; padding:3px; gap:2px; border:1px solid var(--line); border-radius:10px; background:var(--surface); margin-left:auto; margin-right:8px; }
+.seg-btn{ border:0; background:transparent; padding:5px 12px; border-radius:7px; font-family:inherit; font-size:12px; font-weight:600; color:var(--ink-soft); cursor:pointer; }
+.seg-btn.is-active{ background:var(--lime); color:var(--ink); }
+.seg-btn.is-active.is-reduce{ background:var(--ink); color:#fff; }
 .product-results{ margin-top:6px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--surface); max-height:260px; overflow-y:auto; }
 .product-result{ display:flex; justify-content:space-between; align-items:center; gap:10px; width:100%; padding:9px 12px; border:0; border-top:1px solid var(--line); background:none; text-align:left; font-size:12.5px; }
 .product-result:first-child{ border-top:0; }
