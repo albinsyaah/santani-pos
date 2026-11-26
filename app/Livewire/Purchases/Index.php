@@ -3,7 +3,9 @@
 namespace App\Livewire\Purchases;
 
 use App\Models\Purchase;
+use App\Models\ProductBatch;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -34,6 +36,11 @@ class Index extends Component
 
     /** Purchase currently expanded in the detail modal. */
     public ?int $viewingId = null;
+
+    /** Purchase waiting for delete confirmation. */
+    public ?int $deletingId = null;
+
+    public string $deletingLabel = '';
 
     public function updatingSearch(): void
     {
@@ -74,6 +81,66 @@ class Index extends Component
     public function closeDetail(): void
     {
         $this->viewingId = null;
+    }
+
+    public function askDelete(int $purchaseId): void
+    {
+        $purchase = Purchase::findOrFail($purchaseId);
+        $this->deletingId = $purchase->id;
+        $this->deletingLabel = $purchase->purchase_number;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->deletingId = null;
+        $this->deletingLabel = '';
+    }
+
+    /**
+     * Delete the purchase and take its received quantities back out of stock.
+     * Refused when part of that stock has already been sold or reduced.
+     */
+    public function deleteConfirmed(): void
+    {
+        $purchase = $this->deletingId ? Purchase::find($this->deletingId) : null;
+
+        if (! $purchase) {
+            $this->cancelDelete();
+
+            return;
+        }
+
+        $number = $purchase->purchase_number;
+        $blocked = false;
+
+        DB::transaction(function () use ($purchase, &$blocked) {
+            $received = $purchase->items()->whereNotNull('batch_id')->get()
+                ->groupBy('batch_id')
+                ->map(fn ($rows) => (int) $rows->sum('quantity'));
+
+            $batches = ProductBatch::whereIn('id', $received->keys())->lockForUpdate()->get()->keyBy('id');
+
+            foreach ($received as $batchId => $quantity) {
+                if (($batches[$batchId]->stock_quantity ?? 0) < $quantity) {
+                    $blocked = true;
+
+                    return;
+                }
+            }
+
+            foreach ($received as $batchId => $quantity) {
+                $batches[$batchId]->decrement('stock_quantity', $quantity);
+            }
+
+            $purchase->delete();
+        });
+
+        session()->flash('flash', $blocked
+            ? __(':number cannot be deleted because part of its stock was already sold or reduced.', ['number' => $number])
+            : __(':number was deleted and its stock was removed.', ['number' => $number]));
+
+        $this->cancelDelete();
+        $this->resetPage();
     }
 
     /** Base query with every active filter applied — shared by the table and the totals. */

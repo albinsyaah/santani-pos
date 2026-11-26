@@ -132,6 +132,9 @@
                                     <button class="kebab" wire:click="viewPurchase({{ $purchase->id }})" aria-label="{{ __('View details') }}">
                                         <x-tabler-eye />
                                     </button>
+                                    <button class="kebab" wire:click="askDelete({{ $purchase->id }})" aria-label="{{ __('Delete') }}">
+                                        <x-tabler-trash />
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -147,6 +150,29 @@
             {{ $purchases->links() }}
         </div>
     </div>
+
+    @if ($deletingId)
+        <div class="modal-backdrop" wire:click.self="cancelDelete">
+            <div class="modal-panel" style="max-width:440px;">
+                <div class="modal-head">
+                    <h3>{{ __('Delete :name?', ['name' => $deletingLabel]) }}</h3>
+                    <button class="kebab" wire:click="cancelDelete" aria-label="{{ __('Close') }}">
+                        <x-tabler-x />
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p style="color:var(--ink-soft);font-size:13px;">{{ __('The goods received on this purchase will be removed from stock. This action cannot be undone.') }}</p>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn" wire:click="cancelDelete">{{ __('Cancel') }}</button>
+                    <button type="button" class="btn btn-danger" wire:click="deleteConfirmed" wire:loading.attr="disabled" wire:target="deleteConfirmed">
+                        <span wire:loading.remove wire:target="deleteConfirmed">{{ __('Yes, delete') }}</span>
+                        <span wire:loading wire:target="deleteConfirmed">{{ __('Deleting…') }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 
     @if ($this->viewingPurchase)
         @php $detail = $this->viewingPurchase; @endphp
