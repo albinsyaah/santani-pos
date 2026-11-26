@@ -38,16 +38,21 @@
             <h2>{{ __('Revenue by payment method') }}</h2>
             <p>{{ __('For the selected period') }}</p>
         </div>
-        <div class="bars">
-            @php $methodMax = max(1, (float) ($byMethod->max('total') ?? 1)); @endphp
+        <div class="rank-list">
             @forelse ($byMethod as $m)
-                <div class="bar-row">
-                    <span class="bar-label" title="{{ $m['label'] }}">{{ $m['label'] }}</span>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width:{{ round(($m['total'] / $methodMax) * 100) }}%;"></div>
+                    <div class="rank-row">
+                        <div class="rank-top">
+                            <span class="rank-name" title="{{ $m['label'] }}">{{ $m['label'] }}</span>
+                            <span class="rank-amount tabular">Rp {{ number_format($m['total'], 0, ',', '.') }}</span>
+                        </div>
+                        <div class="rank-track" role="img" aria-label="{{ number_format($m['share'], 1) }}%">
+                            <div class="rank-fill" style="width:{{ max($m['total'] > 0 ? 2 : 0, round($m['share'])) }}%;"></div>
+                        </div>
+                        <div class="rank-meta">
+                            <span>{{ number_format($m['share'], 1) }}%</span>
+                            <span>{{ __(':count transaction(s)', ['count' => $m['count']]) }}</span>
+                        </div>
                     </div>
-                    <span class="bar-count tabular">Rp {{ number_format($m['total'], 0, ',', '.') }}</span>
-                </div>
             @empty
                 <p class="stock-empty">{{ __('No sales in this period.') }}</p>
             @endforelse

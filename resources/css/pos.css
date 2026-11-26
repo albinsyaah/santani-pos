@@ -199,6 +199,15 @@
 .bar-row .bar-count{ font-size:12px; font-weight:600; text-align:right; }
 .bar-track{ position:relative; height:10px; background:#eef0e7; border-radius:6px; overflow:hidden; }
 .bar-fill{ position:absolute; inset:0 auto 0 0; border-radius:6px; background:var(--lime-deep); }
+.rank-list{ padding:8px 16px 16px; display:flex; flex-direction:column; }
+.rank-row{ padding:12px 0; border-top:1px solid var(--line); }
+.rank-row:first-child{ border-top:0; }
+.rank-top{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.rank-name{ font-size:13px; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rank-amount{ font-size:13px; font-weight:600; white-space:nowrap; flex-shrink:0; }
+.rank-track{ height:8px; margin:8px 0 6px; background:#eef0e7; border-radius:6px; overflow:hidden; }
+.rank-fill{ height:100%; border-radius:6px; background:var(--lime-deep); }
+.rank-meta{ display:flex; justify-content:space-between; gap:12px; font-size:11.5px; color:var(--ink-soft); }
 .bar-fill.alt{ background:#d9dde0; }
 
 .tx-list{ padding:4px 16px 12px; }

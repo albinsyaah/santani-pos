@@ -210,7 +210,7 @@
     "No line items recorded for this invoice.": "Tidak ada rincian item untuk faktur ini.",
     "No matching farmers.": "Tidak ada petani yang cocok.",
     "No matching products.": "Tidak ada produk yang cocok.",
-    "No outstanding balances. 🎉": "Tidak ada saldo yang belum lunas. 🎉",
+    "No outstanding balances.": "Tidak ada saldo yang belum lunas.",
     "No payments recorded yet.": "Belum ada pembayaran yang tercatat.",
     "No products found.": "Produk tidak ditemukan.",
     "No products match your filters yet.": "Belum ada produk yang cocok dengan filter Anda.",
@@ -485,5 +485,8 @@
     "Batch numbers are generated automatically and prices come from the product catalog. Reductions take the earliest-expiring batches first. Use Incoming Stock Entry for new deliveries.": "Nomor batch dibuat otomatis dan harga diambil dari katalog produk. Pengurangan mengambil batch yang paling cepat kedaluwarsa lebih dulu. Gunakan Entri Stok Masuk untuk pengiriman baru.",
     "The goods received on this purchase will be removed from stock. This action cannot be undone.": "Barang yang diterima pada pembelian ini akan dikurangi dari stok. Tindakan ini tidak dapat dibatalkan.",
     ":number cannot be deleted because part of its stock was already sold or reduced.": ":number tidak dapat dihapus karena sebagian stoknya sudah terjual atau dikurangi.",
-    ":number was deleted and its stock was removed.": ":number dihapus dan stoknya sudah dikurangi."
+    ":number was deleted and its stock was removed.": ":number dihapus dan stoknya sudah dikurangi.",
+    "All-time, by sale items": "Sepanjang waktu, dari item penjualan",
+    ":count unit(s) sold": ":count unit terjual",
+    ":count transaction(s)": ":count transaksi"
 }
