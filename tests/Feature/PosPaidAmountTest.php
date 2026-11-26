@@ -4,7 +4,10 @@ use App\Livewire\Pos\Terminal;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductBatch;
+use App\Models\User;
 use Livewire\Livewire;
+
+beforeEach(fn () => test()->actingAs(User::factory()->create()));
 
 function posProduct(): Product
 {
@@ -41,7 +44,6 @@ test('amount paid follows the grand total until edited', function () {
 
 test('the default amount paid completes the sale without change', function () {
     $product = posProduct();
-    \App\Models\User::factory()->create();
 
     Livewire::test(Terminal::class)
         ->call('addToCart', $product->id)

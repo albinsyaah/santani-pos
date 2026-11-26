@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Models\ProductBatch;
 use App\Models\Sale;
 use App\Models\SaleItem;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -158,7 +157,7 @@ class Tally extends Component
             'lines.*.quantity' => __('quantity'),
         ]);
 
-        $cashier = User::first();
+        $cashier = auth()->user();
 
         if (! $cashier) {
             $this->error = __('No user account exists to record the sale under.');

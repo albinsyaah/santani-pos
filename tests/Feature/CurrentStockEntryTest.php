@@ -4,7 +4,10 @@ use App\Livewire\Stock\Opening;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductBatch;
+use App\Models\User;
 use Livewire\Livewire;
+
+beforeEach(fn () => test()->actingAs(User::factory()->create()));
 
 function makeStockProduct(): Product
 {

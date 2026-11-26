@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -27,10 +26,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
 
-        // Demo "signed in" user shared with the header/sidebar partials.
-        // Swap this out once real authentication is wired up.
+        // The signed-in user, shared with the header/sidebar partials.
         View::composer(['partials.header', 'partials.sidebar'], function ($view) {
-            $view->with('currentUser', once(fn () => User::with('role')->first()));
+            $view->with('currentUser', once(fn () => auth()->user()?->loadMissing('role')));
         });
     }
 

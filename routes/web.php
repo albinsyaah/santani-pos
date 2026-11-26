@@ -31,23 +31,27 @@ Route::get('/locale/{locale}', function (string $locale) {
     return back();
 })->name('locale.switch');
 
-Route::livewire('/', Dashboard::class)->name('dashboard');
-Route::livewire('/pos', PosTerminal::class)->name('pos.terminal');
-Route::livewire('/pos/pending', PosPending::class)->name('pos.pending');
-Route::livewire('/sales', SalesIndex::class)->name('sales.index');
-Route::livewire('/sales/tally', SalesTally::class)->name('sales.tally');
-Route::get('/sales/{sale}/receipt', [ReceiptController::class, 'show'])->name('sales.receipt');
-Route::livewire('/products', ProductsIndex::class)->name('products.index');
-Route::livewire('/products/stock', StockOpening::class)->name('stock.opening');
-Route::livewire('/batches', BatchesIndex::class)->name('batches.index');
-Route::livewire('/categories', CategoriesIndex::class)->name('categories.index');
-Route::livewire('/purchases', PurchasesIndex::class)->name('purchases.index');
-Route::livewire('/purchases/create', PurchasesCreate::class)->name('purchases.create');
-Route::livewire('/customers', CustomersIndex::class)->name('customers.index');
-Route::livewire('/customer-payments', CustomerPaymentsIndex::class)->name('customer-payments.index');
-Route::livewire('/suppliers', SuppliersIndex::class)->name('suppliers.index');
-Route::livewire('/reports', ReportsIndex::class)->name('reports.index');
-Route::livewire('/reports/sales', ReportsSales::class)->name('reports.sales');
-Route::livewire('/reports/receivables', ReportsReceivables::class)->name('reports.receivables');
-Route::livewire('/reports/expirations', ReportsExpirations::class)->name('reports.expirations');
-Route::livewire('/settings', SettingsIndex::class)->name('settings.index');
+// Everything below needs a signed-in user. /login and /logout come from Laravel Fortify
+// (see App\Providers\FortifyServiceProvider and config/fortify.php).
+Route::middleware('auth')->group(function () {
+    Route::livewire('/', Dashboard::class)->name('dashboard');
+    Route::livewire('/pos', PosTerminal::class)->name('pos.terminal');
+    Route::livewire('/pos/pending', PosPending::class)->name('pos.pending');
+    Route::livewire('/sales', SalesIndex::class)->name('sales.index');
+    Route::livewire('/sales/tally', SalesTally::class)->name('sales.tally');
+    Route::get('/sales/{sale}/receipt', [ReceiptController::class, 'show'])->name('sales.receipt');
+    Route::livewire('/products', ProductsIndex::class)->name('products.index');
+    Route::livewire('/products/stock', StockOpening::class)->name('stock.opening');
+    Route::livewire('/batches', BatchesIndex::class)->name('batches.index');
+    Route::livewire('/categories', CategoriesIndex::class)->name('categories.index');
+    Route::livewire('/purchases', PurchasesIndex::class)->name('purchases.index');
+    Route::livewire('/purchases/create', PurchasesCreate::class)->name('purchases.create');
+    Route::livewire('/customers', CustomersIndex::class)->name('customers.index');
+    Route::livewire('/customer-payments', CustomerPaymentsIndex::class)->name('customer-payments.index');
+    Route::livewire('/suppliers', SuppliersIndex::class)->name('suppliers.index');
+    Route::livewire('/reports', ReportsIndex::class)->name('reports.index');
+    Route::livewire('/reports/sales', ReportsSales::class)->name('reports.sales');
+    Route::livewire('/reports/receivables', ReportsReceivables::class)->name('reports.receivables');
+    Route::livewire('/reports/expirations', ReportsExpirations::class)->name('reports.expirations');
+    Route::livewire('/settings', SettingsIndex::class)->name('settings.index');
+});

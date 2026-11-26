@@ -166,5 +166,11 @@
             <p class="side-account-name">{{ $currentUser->name ?? __('Guest user') }}</p>
             <p class="side-account-email">{{ $currentUser->email ?? '—' }}</p>
         </div>
+        <form method="POST" action="{{ route('logout') }}" class="side-logout">
+            @csrf
+            <button type="submit" class="kebab" aria-label="{{ __('Sign out') }}" title="{{ __('Sign out') }}">
+                <x-tabler-logout />
+            </button>
+        </form>
     </div>
 </aside>

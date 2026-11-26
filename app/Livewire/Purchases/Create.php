@@ -7,7 +7,6 @@ use App\Models\ProductBatch;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\Supplier;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -197,7 +196,7 @@ class Create extends Component
 
         $total = $this->subtotal;
         $paid = min((float) (($validated['paidAmount'] ?? '') ?: 0), $total);
-        $receiver = User::first();
+        $receiver = auth()->user();
 
         try {
             $purchase = DB::transaction(function () use ($validated, $total, $paid, $receiver) {

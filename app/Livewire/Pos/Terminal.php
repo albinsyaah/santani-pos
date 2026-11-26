@@ -8,7 +8,6 @@ use App\Models\Product;
 use App\Models\ProductBatch;
 use App\Models\Sale;
 use App\Models\SaleItem;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -75,7 +74,7 @@ class Terminal extends Component
         }
 
         PendingCart::create([
-            'user_id' => User::first()?->id,
+            'user_id' => auth()->id(),
             'customer_id' => $this->customerId,
             'note' => collect($this->cart)->pluck('name')->take(2)->implode(', ').(count($this->cart) > 2 ? ', …' : ''),
             'cart_data' => $this->cart,
@@ -229,7 +228,7 @@ class Terminal extends Component
             return;
         }
 
-        $cashier = User::first();
+        $cashier = auth()->user();
 
         try {
             DB::transaction(function () use ($customer, $paid, $grandTotal, $unpaidBalance, $cashier) {

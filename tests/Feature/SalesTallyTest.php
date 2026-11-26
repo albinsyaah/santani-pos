@@ -8,9 +8,10 @@ use App\Models\Sale;
 use App\Models\User;
 use Livewire\Livewire;
 
+beforeEach(fn () => test()->actingAs(User::factory()->create()));
+
 function tallyProduct(int $stock = 0): Product
 {
-    User::factory()->create();
     $category = Category::create(['name' => 'Fertilizer', 'slug' => 'fertilizer']);
 
     $product = Product::create([

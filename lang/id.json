@@ -464,5 +464,12 @@
     "Pagination": "Navigasi halaman",
     "Previous": "Sebelumnya",
     "Next": "Berikutnya",
-    "Go to page :page": "Ke halaman :page"
+    "Go to page :page": "Ke halaman :page",
+    "Sign in": "Masuk",
+    "Sign in to continue to your point of sale.": "Masuk untuk melanjutkan ke kasir Anda.",
+    "Password": "Kata sandi",
+    "Remember me": "Ingat saya",
+    "Sign out": "Keluar",
+    "auth.failed": "Email atau kata sandi salah.",
+    "auth.throttle": "Terlalu banyak percobaan masuk. Coba lagi dalam :seconds detik."
 }
