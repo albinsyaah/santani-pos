@@ -5,7 +5,6 @@ namespace App\Livewire\Reports;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Sale;
-use App\Models\SaleItem;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -18,16 +17,22 @@ class Index extends Component
     #[Computed]
     public function salesByCategory()
     {
-        return Category::with('products:id,category_id')
-            ->get()
-            ->map(function (Category $category) {
-                $productIds = $category->products->pluck('id');
+        $rows = Category::query()
+            ->leftJoin('products', 'products.category_id', '=', 'categories.id')
+            ->leftJoin('sale_items', 'sale_items.product_id', '=', 'products.id')
+            ->groupBy('categories.id', 'categories.name')
+            ->selectRaw('categories.name, COALESCE(SUM(sale_items.subtotal), 0) as revenue, COALESCE(SUM(sale_items.quantity), 0) as units')
+            ->get();
 
-                return [
-                    'name' => $category->name,
-                    'revenue' => (float) SaleItem::whereIn('product_id', $productIds)->sum('subtotal'),
-                ];
-            })
+        $total = (float) $rows->sum('revenue');
+
+        return $rows
+            ->map(fn ($row) => [
+                'name' => $row->name,
+                'revenue' => (float) $row->revenue,
+                'units' => (int) $row->units,
+                'share' => $total > 0 ? ((float) $row->revenue / $total) * 100 : 0,
+            ])
             ->sortByDesc('revenue')
             ->values();
     }

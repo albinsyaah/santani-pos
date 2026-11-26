@@ -21,17 +21,22 @@
         <div class="card">
             <div class="card-head">
                 <h2>{{ __('Revenue by category') }}</h2>
-                <p>{{ __('All-time, from completed sale items') }}</p>
+                <p>{{ __('All-time, by sale items') }}</p>
             </div>
-            <div class="bars">
-                @php $catMax = max(1, (float) ($this->salesByCategory->max('revenue') ?? 1)); @endphp
+            <div class="rank-list">
                 @forelse ($this->salesByCategory as $c)
-                    <div class="bar-row">
-                        <span class="bar-label" title="{{ $c['name'] }}">{{ $c['name'] }}</span>
-                        <div class="bar-track">
-                            <div class="bar-fill" style="width:{{ round(($c['revenue'] / $catMax) * 100) }}%;"></div>
+                    <div class="rank-row">
+                        <div class="rank-top">
+                            <span class="rank-name" title="{{ $c['name'] }}">{{ $c['name'] }}</span>
+                            <span class="rank-amount tabular">Rp {{ number_format($c['revenue'], 0, ',', '.') }}</span>
                         </div>
-                        <span class="bar-count tabular">Rp {{ number_format($c['revenue'], 0, ',', '.') }}</span>
+                        <div class="rank-track" role="img" aria-label="{{ number_format($c['share'], 1) }}%">
+                            <div class="rank-fill" style="width:{{ max($c['revenue'] > 0 ? 2 : 0, round($c['share'])) }}%;"></div>
+                        </div>
+                        <div class="rank-meta">
+                            <span>{{ number_format($c['share'], 1) }}%</span>
+                            <span>{{ __(':count unit(s) sold', ['count' => number_format($c['units'], 0, ',', '.')]) }}</span>
+                        </div>
                     </div>
                 @empty
                     <p class="stock-empty">{{ __('No categories yet.') }}</p>
@@ -57,7 +62,7 @@
                         </div>
                     </div>
                 @empty
-                    <p class="stock-empty">{{ __('No outstanding balances. 🎉') }}</p>
+                    <p class="stock-empty">{{ __('No outstanding balances.') }}</p>
                 @endforelse
             </div>
         </div>

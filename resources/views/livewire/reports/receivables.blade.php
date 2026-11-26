@@ -73,7 +73,7 @@
                             <td class="tabular cell-strong">Rp {{ number_format($row['total'], 0, ',', '.') }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="7"><p class="table-empty">{{ __('No outstanding balances. 🎉') }}</p></td></tr>
+                        <tr><td colspan="7"><p class="table-empty">{{ __('No outstanding balances.') }}</p></td></tr>
                     @endforelse
                 </tbody>
                 @if ($rows->isNotEmpty())
