@@ -2,7 +2,7 @@
     <div class="page-head">
         <div>
             <h1>{{ __('Add Current Stock') }}</h1>
-            <p>{{ __('Record the inventory you already have on the shelf, with batch numbers and expiration dates.') }}</p>
+            <p>{{ __('Record the stock you have on the shelf, or reduce it for damage, expiry or corrections.') }}</p>
         </div>
         <a href="{{ route('batches.index') }}" wire:navigate class="btn">
             <x-tabler-packages />
@@ -30,7 +30,7 @@
                 <div class="card-head">
                     <div>
                         <p style="font-size:13.5px;font-weight:600;">{{ __('Stock on hand') }}</p>
-                        <p style="font-size:11px;color:var(--ink-soft);margin-top:2px;">{{ __('Each row creates a batch, or tops up the batch if the batch number already exists for that product.') }}</p>
+                        <p style="font-size:11px;color:var(--ink-soft);margin-top:2px;">{{ __('Each row adds a batch, or reduces stock (earliest expiry first).') }}</p>
                     </div>
                 </div>
 
@@ -39,6 +39,10 @@
                         <div class="entry-line" wire:key="line-{{ $index }}">
                             <div class="entry-line-head">
                                 <span class="entry-line-title">{{ __('Item :number', ['number' => $index + 1]) }}</span>
+                                <div class="seg" role="group" aria-label="{{ __('Stock action') }}">
+                                    <button type="button" class="seg-btn {{ $line['mode'] === 'add' ? 'is-active' : '' }}" wire:click="setMode({{ $index }}, 'add')">{{ __('Add') }}</button>
+                                    <button type="button" class="seg-btn {{ $line['mode'] === 'reduce' ? 'is-active is-reduce' : '' }}" wire:click="setMode({{ $index }}, 'reduce')">{{ __('Reduce') }}</button>
+                                </div>
                                 @if (count($lines) > 1)
                                     <button type="button" class="kebab" wire:click="removeLine({{ $index }})" aria-label="{{ __('Remove row') }}">
                                         <x-tabler-trash />
@@ -53,7 +57,7 @@
                                         <div class="product-picked">
                                             <span>
                                                 <strong>{{ $selected->name }}</strong>
-                                                <span class="hint">{{ $selected->sku }} &middot; {{ $selected->unit }}</span>
+                                                <span class="hint"><span class="hide-mobile">{{ $selected->sku }} &middot; {{ $selected->unit }} &middot; </span>{{ __('In stock') }}: {{ (int) ($this->stockOnHand[$selected->id] ?? 0) }}</span>
                                             </span>
                                             <button type="button" class="btn btn-sm" wire:click="clearProduct({{ $index }})">
                                                 {{ __('Change product') }}
@@ -82,11 +86,12 @@
                                 </div>
 
                                 <div class="field">
-                                    <label>{{ __('Quantity') }}</label>
+                                    <label>{{ $line['mode'] === 'reduce' ? __('Quantity to reduce') : __('Quantity to add') }}</label>
                                     <input type="number" min="1" class="input @error('lines.'.$index.'.quantity') invalid @enderror" wire:model.live.debounce.400ms="lines.{{ $index }}.quantity" placeholder="0">
                                     @error('lines.'.$index.'.quantity') <span class="error">{{ $message }}</span> @enderror
                                 </div>
 
+                                @if ($line['mode'] === 'add')
                                 <div class="field">
                                     <label>{{ __('Manufactured') }} <span class="hint">({{ __('optional') }})</span></label>
                                     <input type="date" class="input @error('lines.'.$index.'.manufactured_date') invalid @enderror" wire:model="lines.{{ $index }}.manufactured_date">
@@ -98,6 +103,7 @@
                                     <input type="date" class="input @error('lines.'.$index.'.expiration_date') invalid @enderror" wire:model="lines.{{ $index }}.expiration_date">
                                     @error('lines.'.$index.'.expiration_date') <span class="error">{{ $message }}</span> @enderror
                                 </div>
+                                @endif
                             </div>
                         </div>
                     @endforeach
@@ -123,8 +129,8 @@
                             <x-tabler-packages style="color:#1c1f1a" />
                         </div>
                         <div>
-                            <p class="stat-value">{{ __(':count unit(s)', ['count' => $this->totalUnits]) }}</p>
-                            <p class="stat-caption">{{ __(':count batch row(s)', ['count' => count($lines)]) }}</p>
+                            <p class="stat-value">+{{ $this->totalAdded }} / −{{ $this->totalReduced }}</p>
+                            <p class="stat-caption">{{ __(':count item row(s)', ['count' => count($lines)]) }}</p>
                         </div>
                     </div>
                 </div>
@@ -132,7 +138,7 @@
                 <div class="card" style="flex-basis:auto;">
                     <div class="card-body">
                         <p class="stat-caption" style="margin-top:10px;">
-                            {{ __('Batch numbers are generated automatically and prices come from the product catalog. Use Incoming Stock Entry for new deliveries.') }}
+                            {{ __('Batch numbers are generated automatically and prices come from the product catalog. Reductions take the earliest-expiring batches first. Use Incoming Stock Entry for new deliveries.') }}
                         </p>
 
                         <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;" wire:loading.attr="disabled" wire:target="save">

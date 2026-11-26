@@ -3,7 +3,8 @@
         ? collect(explode(' ', $currentUser->name))->map(fn ($p) => mb_substr($p, 0, 1))->take(2)->implode('')
         : 'AP';
     $posGroupActive = request()->routeIs('pos.*') || request()->routeIs('sales.*');
-    $productsGroupActive = request()->routeIs('products.*') || request()->routeIs('batches.*') || request()->routeIs('categories.*') || request()->routeIs('stock.*');
+    $productsGroupActive = request()->routeIs('products.*') || request()->routeIs('categories.*');
+    $stockGroupActive = request()->routeIs('stock.*') || request()->routeIs('batches.*');
     $purchasesGroupActive = request()->routeIs('purchases.*');
     $farmersGroupActive = request()->routeIs('customers.*') || request()->routeIs('customer-payments.*');
     $reportsGroupActive = request()->routeIs('reports.*');
@@ -57,6 +58,21 @@
                     <x-tabler-point />
                     <span>{{ __('Product Data') }}</span>
                 </a>
+                <a href="{{ route('categories.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                    <x-tabler-point />
+                    <span>{{ __('Categories & Active Ingredients') }}</span>
+                </a>
+            </div>
+        </details>
+        <details class="side-group" @if($stockGroupActive) open @endif>
+            <summary class="side-link {{ $stockGroupActive ? 'active' : '' }}">
+                <span class="side-group-label">
+                    <x-tabler-packages />
+                    <span>{{ __('Stock') }}</span>
+                </span>
+                <x-tabler-chevron-right class="chevron" />
+            </summary>
+            <div class="side-submenu">
                 <a href="{{ route('stock.opening') }}" wire:navigate class="side-sublink {{ request()->routeIs('stock.*') ? 'active' : '' }}">
                     <x-tabler-point />
                     <span>{{ __('Add Current Stock') }}</span>
@@ -64,10 +80,6 @@
                 <a href="{{ route('batches.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('batches.*') ? 'active' : '' }}">
                     <x-tabler-point />
                     <span>{{ __('Batches & Expiration Dates') }}</span>
-                </a>
-                <a href="{{ route('categories.index') }}" wire:navigate class="side-sublink {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                    <x-tabler-point />
-                    <span>{{ __('Categories & Active Ingredients') }}</span>
                 </a>
             </div>
         </details>
@@ -164,7 +176,13 @@
         <div class="avatar">{{ $initials }}</div>
         <div>
             <p class="side-account-name">{{ $currentUser->name ?? __('Guest user') }}</p>
-            <p class="side-account-email">{{ $currentUser->email ?? '—' }}</p>
+            <p class="side-account-email">{{ $currentUser->username ?? '—' }}</p>
         </div>
+        <form method="POST" action="{{ route('logout') }}" class="side-logout">
+            @csrf
+            <button type="submit" class="kebab" aria-label="{{ __('Sign out') }}" title="{{ __('Sign out') }}">
+                <x-tabler-logout />
+            </button>
+        </form>
     </div>
 </aside>

@@ -9,9 +9,10 @@ use App\Models\Supplier;
 use App\Models\User;
 use Livewire\Livewire;
 
+beforeEach(fn () => test()->actingAs(User::factory()->create()));
+
 function purchaseProduct(): Product
 {
-    User::factory()->create();
     $category = Category::create(['name' => 'Fertilizer', 'slug' => 'fertilizer']);
 
     return Product::create([

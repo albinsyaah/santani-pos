@@ -4,7 +4,10 @@ use App\Livewire\Stock\Opening;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductBatch;
+use App\Models\User;
 use Livewire\Livewire;
+
+beforeEach(fn () => test()->actingAs(User::factory()->create()));
 
 function makeStockProduct(): Product
 {
@@ -135,4 +138,65 @@ test('manufactured and expiration dates are optional', function () {
         ->and($batch->expiration_date)->toBeNull()
         ->and($product->fresh()->total_stock)->toBe(12)
         ->and(ProductBatch::fefoAvailable()->count())->toBe(1);
+});
+
+function stockBatch(Product $product, string $number, int $qty, ?string $expires): ProductBatch
+{
+    return ProductBatch::create([
+        'product_id' => $product->id,
+        'batch_number' => $number,
+        'stock_quantity' => $qty,
+        'purchase_price' => 10000,
+        'selling_price' => 12500,
+        'expiration_date' => $expires,
+    ]);
+}
+
+test('reducing stock takes the earliest expiry first across batches', function () {
+    $product = makeStockProduct();
+    $late = stockBatch($product, 'LATE', 10, now()->addYear()->format('Y-m-d'));
+    $early = stockBatch($product, 'EARLY', 5, now()->addMonth()->format('Y-m-d'));
+    $none = stockBatch($product, 'NONE', 4, null);
+
+    Livewire::test(Opening::class)
+        ->call('setMode', 0, 'reduce')
+        ->set('lines.0.product_id', $product->id)
+        ->set('lines.0.quantity', '8')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($early->fresh()->stock_quantity)->toBe(0)
+        ->and($late->fresh()->stock_quantity)->toBe(7)
+        ->and($none->fresh()->stock_quantity)->toBe(4);
+});
+
+test('reducing more than the stock on hand is rejected and changes nothing', function () {
+    $product = makeStockProduct();
+    $batch = stockBatch($product, 'B-1', 5, null);
+
+    Livewire::test(Opening::class)
+        ->call('setMode', 0, 'reduce')
+        ->set('lines.0.product_id', $product->id)
+        ->set('lines.0.quantity', '6')
+        ->call('save')
+        ->assertHasErrors(['lines.0.quantity']);
+
+    expect($batch->fresh()->stock_quantity)->toBe(5);
+});
+
+test('add and reduce rows can be saved together', function () {
+    $product = makeStockProduct();
+    $batch = stockBatch($product, 'B-1', 10, null);
+
+    Livewire::test(Opening::class)
+        ->set('lines.0.product_id', $product->id)
+        ->set('lines.0.quantity', '3')
+        ->call('addLine')
+        ->call('setMode', 1, 'reduce')
+        ->set('lines.1.product_id', $product->id)
+        ->set('lines.1.quantity', '12')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect((int) ProductBatch::where('product_id', $product->id)->sum('stock_quantity'))->toBe(1);
 });

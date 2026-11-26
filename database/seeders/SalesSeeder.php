@@ -473,7 +473,7 @@ class SalesSeeder extends Seeder
         return (int) DB::table('users')->insertGetId([
             'role_id' => $roleId,
             'name' => 'Kasir',
-            'email' => 'kasir@tunastanimakmur.test',
+            'username' => 'kasir',
             'password' => Hash::make('password'),
             'status' => 'active',
             'created_at' => now(),

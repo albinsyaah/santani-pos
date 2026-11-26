@@ -58,7 +58,7 @@
                 <thead>
                     <tr>
                         <th>{{ __('Name') }}</th>
-                        <th>{{ __('Email') }}</th>
+                        <th>{{ __('Username') }}</th>
                         <th>{{ __('Role') }}</th>
                         <th>{{ __('Status') }}</th>
                     </tr>
@@ -67,7 +67,7 @@
                     @forelse ($users as $user)
                         <tr wire:key="user-{{ $user->id }}">
                             <td class="cell-strong">{{ $user->name }}</td>
-                            <td class="cell-muted">{{ $user->email }}</td>
+                            <td class="cell-muted">{{ $user->username }}</td>
                             <td>{{ $user->role?->name ?? '—' }}</td>
                             <td>
                                 <span class="badge {{ $user->status === 'active' ? 'badge-good' : 'badge-neutral' }}">{{ \App\Support\Labels::userStatus($user->status) }}</span>

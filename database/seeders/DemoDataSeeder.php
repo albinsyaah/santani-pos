@@ -25,7 +25,7 @@ class DemoDataSeeder extends Seeder
         Role::firstOrCreate(['name' => 'Warehouse']);
 
         $owner = User::firstOrCreate(
-            ['email' => 'owner@agropos.test'],
+            ['username' => 'owner'],
             [
                 'role_id' => $ownerRole->id,
                 'name' => 'Admin',
@@ -36,7 +36,7 @@ class DemoDataSeeder extends Seeder
         );
 
         User::firstOrCreate(
-            ['email' => 'cashier@agropos.test'],
+            ['username' => 'cashier'],
             [
                 'role_id' => $cashierRole->id,
                 'name' => 'Kasir',
