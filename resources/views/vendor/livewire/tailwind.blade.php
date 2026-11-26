@@ -16,7 +16,7 @@ $pageName = $paginator->getPageName();
 @endphp
 <div>
     @if ($paginator->hasPages())
-        <nav role="navigation" aria-label="{{ __('Pagination') }}" class="pg">
+        <nav role="navigation" aria-label="{{ __('Page navigation') }}" class="pg">
             {{-- Previous --}}
             @if ($paginator->onFirstPage())
                 <span class="pg-btn is-disabled" aria-disabled="true" aria-label="{{ __('Previous') }}">
