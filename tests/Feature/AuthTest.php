@@ -17,9 +17,9 @@ test('the login page renders for guests', function () {
 });
 
 test('a user can sign in and reach the dashboard', function () {
-    $user = User::factory()->create(['email' => 'owner@example.test']);
+    $user = User::factory()->create(['username' => 'owner']);
 
-    $this->post(route('login'), ['email' => 'OWNER@example.test', 'password' => 'password'])
+    $this->post(route('login'), ['username' => 'OWNER', 'password' => 'password'])
         ->assertRedirect('/');
 
     $this->assertAuthenticatedAs($user);
@@ -27,34 +27,34 @@ test('a user can sign in and reach the dashboard', function () {
 });
 
 test('a wrong password is rejected', function () {
-    User::factory()->create(['email' => 'owner@example.test']);
+    User::factory()->create(['username' => 'owner']);
 
     $this->from(route('login'))
-        ->post(route('login'), ['email' => 'owner@example.test', 'password' => 'wrong'])
+        ->post(route('login'), ['username' => 'owner', 'password' => 'wrong'])
         ->assertRedirect(route('login'))
-        ->assertSessionHasErrors('email');
+        ->assertSessionHasErrors('username');
 
     $this->assertGuest();
 });
 
 test('an inactive account cannot sign in', function () {
-    User::factory()->inactive()->create(['email' => 'old@example.test']);
+    User::factory()->inactive()->create(['username' => 'old']);
 
-    $this->post(route('login'), ['email' => 'old@example.test', 'password' => 'password'])
-        ->assertSessionHasErrors('email');
+    $this->post(route('login'), ['username' => 'old', 'password' => 'password'])
+        ->assertSessionHasErrors('username');
 
     $this->assertGuest();
 });
 
 test('too many failed attempts are throttled', function () {
-    RateLimiter::clear('owner@example.test|127.0.0.1');
-    User::factory()->create(['email' => 'owner@example.test']);
+    RateLimiter::clear('owner|127.0.0.1');
+    User::factory()->create(['username' => 'owner']);
 
     foreach (range(1, 5) as $i) {
-        $this->post(route('login'), ['email' => 'owner@example.test', 'password' => 'wrong']);
+        $this->post(route('login'), ['username' => 'owner', 'password' => 'wrong']);
     }
 
-    $this->post(route('login'), ['email' => 'owner@example.test', 'password' => 'password'])
+    $this->post(route('login'), ['username' => 'owner', 'password' => 'password'])
         ->assertStatus(429);
 
     $this->assertGuest();

@@ -30,11 +30,11 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::loginView(fn () => view('auth.login'));
 
-        // Only active accounts may sign in. A wrong password, an unknown email and
-        // a disabled account all fail the same way, so nothing leaks about which
-        // emails exist.
+        // Only active accounts may sign in. A wrong password, an unknown username
+        // and a disabled account all fail the same way, so nothing leaks about which
+        // usernames exist.
         Fortify::authenticateUsing(function (Request $request) {
-            $user = User::where('email', Str::lower((string) $request->input(Fortify::username())))->first();
+            $user = User::where('username', Str::lower((string) $request->input(Fortify::username())))->first();
 
             if ($user && $user->status === 'active' && Hash::check((string) $request->input('password'), $user->password)) {
                 return $user;
@@ -43,7 +43,7 @@ class FortifyServiceProvider extends ServiceProvider
             return null;
         });
 
-        // 5 attempts per minute for each email + IP address.
+        // 5 attempts per minute for each username + IP address.
         RateLimiter::for('login', function (Request $request) {
             $key = Str::transliterate(Str::lower((string) $request->input(Fortify::username())).'|'.$request->ip());
 

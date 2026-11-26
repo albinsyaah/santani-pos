@@ -27,7 +27,7 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'username' => fake()->unique()->userName(),
             'role_id' => fn () => Role::firstOrCreate(['name' => 'Cashier'])->id,
             'password' => static::$password ??= Hash::make('password'),
             'phone' => null,

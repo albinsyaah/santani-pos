@@ -164,7 +164,7 @@
         <div class="avatar">{{ $initials }}</div>
         <div>
             <p class="side-account-name">{{ $currentUser->name ?? __('Guest user') }}</p>
-            <p class="side-account-email">{{ $currentUser->email ?? '—' }}</p>
+            <p class="side-account-email">{{ $currentUser->username ?? '—' }}</p>
         </div>
         <form method="POST" action="{{ route('logout') }}" class="side-logout">
             @csrf

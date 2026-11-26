@@ -17,7 +17,9 @@ return [
     /*
     | The credential used to sign in, and the user column it maps to.
     */
-    'username' => 'email',
+    'username' => 'username',
+
+    // Only used by password reset, which is not enabled (users have no email column).
     'email' => 'email',
     'lowercase_usernames' => true,
 

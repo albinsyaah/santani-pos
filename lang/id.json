@@ -470,6 +470,7 @@
     "Password": "Kata sandi",
     "Remember me": "Ingat saya",
     "Sign out": "Keluar",
-    "auth.failed": "Email atau kata sandi salah.",
-    "auth.throttle": "Terlalu banyak percobaan masuk. Coba lagi dalam :seconds detik."
+    "auth.failed": "Nama pengguna atau kata sandi salah.",
+    "auth.throttle": "Terlalu banyak percobaan masuk. Coba lagi dalam :seconds detik.",
+    "Username": "Nama pengguna"
 }

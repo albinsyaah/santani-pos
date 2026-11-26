@@ -10,11 +10,11 @@
             @csrf
 
             <div class="field">
-                <label for="email">{{ __('Email') }}</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}"
-                       class="input @error('email') invalid @enderror"
-                       autocomplete="username" autofocus required>
-                @error('email') <span class="error">{{ $message }}</span> @enderror
+                <label for="username">{{ __('Username') }}</label>
+                <input id="username" type="text" name="username" value="{{ old('username') }}"
+                       class="input @error('username') invalid @enderror"
+                       autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" autofocus required>
+                @error('username') <span class="error">{{ $message }}</span> @enderror
             </div>
 
             <div class="field">
